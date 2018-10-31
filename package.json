@@ -1,0 +1,27 @@
+{
+  "name": "binancemon",
+  "version": "1.0.0",
+  "description": "monitor binance prices",
+  "main": "dist/app.js",
+  "scripts": {
+    "build": "babel ./src --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log --copy-files",
+    "start": "npm run build && node dist/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Andrey Kim",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0"
+  },
+  "dependencies": {
+    "amp-node-api-client": "file:../amp/amp-node-api-client",
+    "babel-core": "^6.26.3",
+    "ethers": "^4.0.7",
+    "express": "^4.16.4",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.5",
+    "ws": "^6.1.0"
+  }
+}
