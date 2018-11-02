@@ -6,47 +6,10 @@ import ws from './server'
 var myResolves = {}
 let myOrders = {}
 
-
-let privateKey = 
+let privateKey = "0x4f1320c9d2c4b8f5afbadb96adf3122af67814e8a79d7753281eca5d45d8abae" // AMP1
+privateKey = "0x207dadbadd624708a257b593710ba103184c76b843d975969d4193d57954b5cd" // AMP2
 let provider = getDefaultProvider('rinkeby');
 let wallet = new Wallet(privateKey, provider)
-
-
-const cancelPromise = (hash) => {
-  return new Promise( (res, rej) => {
-    myResolves[hash] = res
-  })
-}
-
-
-
-ws.onmessage = (ev) => {
-  let data = JSON.parse(ev.data)
-  if (data.event && myResolves[data.event.hash] && data.event.type=="ORDER_CANCELLED") {
-//    console.log("order cancelled: "+data.event.hash)
-    myResolves[data.event.hash]()
-    delete myResolves[data.event.hash]
-  }
-}
-
-
-export const cancelOrders = (token) => {
-    let orders = new ampMessages.Orders(wallet);
-    return myOrders[token] ? myOrders[token]
-         .map( hash => orders.cancel_order(hash)
-                       .then( ord => {
-                          ws.send(JSON.stringify(ord))
-                          return ord.event.payload.orderHash
-                       }).then( hash => {
-                          cancelPromise(hash) 
-                       }).catch( err=> {
-                          console.log(err)
-                       }) ) : []
-
-
-  }
-
-
 
 
 export  const newOrder = async (opts) => {
@@ -81,9 +44,6 @@ export const getMyOrders = async () => rp("http://13.125.100.61:8081/orders?addr
                                   return acc
                                 }, {}))
                               .then(acc => {
-//                                console.log("ACELL###############")
-//                                console.log(acc)
                                 myOrders = acc
                               }).catch( err => {console.log("ERROR")})
 
-export { myOrders }
