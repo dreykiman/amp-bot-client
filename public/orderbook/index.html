@@ -35,7 +35,6 @@ function onload() {
   btn.onclick = function() {
     let popget = new XMLHttpRequest()
 
-    pairreq.onreadystatechange = function() {
     popget.open("GET", "/api/populate")
     popget.send()
   }
