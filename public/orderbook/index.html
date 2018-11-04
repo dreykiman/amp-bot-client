@@ -1,0 +1,114 @@
+<html>
+<head>
+<title>Orderbook</title>
+
+<style>
+
+tr.pairName td {
+  font-weight: bold;
+}
+
+td {
+  vertical-align: text-top;
+  padding: 0.3em;
+  min-width: 400px;
+}
+
+td.bids {
+  border: 1px solid blue;
+  color: blue;
+}
+
+td.asks{
+  border: 1px solid red;
+  color: red;
+}
+</style>
+
+
+<script>
+var btn = document.createElement("button")
+
+function onload() {
+  btn.innerHTML= "POPULATE"
+
+  btn.onclick = function() {
+    let popget = new XMLHttpRequest()
+
+    pairreq.onreadystatechange = function() {
+    popget.open("GET", "/api/populate")
+    popget.send()
+  }
+
+  document.body.appendChild(btn)
+
+  let pairreq = new XMLHttpRequest()
+
+  pairreq.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      let tbl = document.createElement("table")
+      document.body.appendChild(tbl)
+
+      let data = JSON.parse(this.responseText)
+      data.filter( ele => ele.quoteTokenSymbol==="WETH" )
+//        .slice(0,3)
+        .forEach( ele => {
+          let pairName = ele.baseTokenSymbol+"/"+ele.quoteTokenSymbol
+          let row = tbl.insertRow()
+          row.className = "pairName"
+          row.insertCell().innerHTML = pairName
+          row = tbl.insertRow()
+          row.insertCell().className = 'bids'
+          row.insertCell().className = 'asks'
+
+          let ws = new WebSocket("ws://13.125.100.61:8081/socket")
+
+          ws.onopen = _ => {ws.send(JSON.stringify({
+            "channel": "orderbook",
+            "event": {
+              "type": "SUBSCRIBE",
+              "payload": {
+                "baseToken": ele.baseTokenAddress,
+                "quoteToken": ele.quoteTokenAddress,
+                "name": pairName
+              }
+            }
+          }))}
+
+          let ob = {asks: {}, bids: {}}
+
+          ws.onmessage = ev => {
+            let data = JSON.parse(ev.data)
+            console.log(JSON.stringify(data))
+            data = data.event && data.event.payload
+            if(data.asks!=null && data.bids!=null) {
+              ["bids", "asks"].forEach( (name,icell) => {
+                data[name].forEach( ele => {
+                  if( ele.amount == "0")
+                    delete ob[name][ele.pricepoint]
+                  else
+                    ob[name][ele.pricepoint] = ele.amount
+                })
+                let line = Object.keys(ob[name]).sort( (a,b) => name==="asks" ? a-b : b-a)
+                  .map( price => 'price: '+price+", amount: "+ob[name][price] )
+                  .join("<br>")
+
+                row.cells[icell].innerHTML = line;
+              })
+            }
+          }
+      })
+    }
+  }
+
+  pairreq.open("GET", "/api/pairs")
+  pairreq.send()
+}
+</script>
+
+</head>
+
+<body onload=onload()>
+
+</body>
+</html>

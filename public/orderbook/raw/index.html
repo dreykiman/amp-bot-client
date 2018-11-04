@@ -1,0 +1,62 @@
+<html>
+<head>
+<title>Orderbook</title>
+
+<style>
+
+tr.pairName td {
+  font-weight: bold;
+}
+
+td {
+  vertical-align: text-top;
+  padding: 0.3em;
+  min-width: 400px;
+}
+
+td.bids {
+  border: 1px solid blue;
+  color: blue;
+}
+
+td.asks{
+  border: 1px solid red;
+  color: red;
+}
+</style>
+
+
+<script>
+function onload() {
+  let pairreq = new XMLHttpRequest()
+
+  pairreq.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      let data = JSON.parse(this.responseText)
+
+      if( 'data' in data ){
+        data = data.data
+
+        let tbl = document.createElement("table")
+        document.body.appendChild(tbl)
+
+        data.sort( (a, b) => (a.pairName > b.pairName) ? 1 : ((b.pairName > a.pairName) ? -1 : 0) )
+          .forEach( ele => {
+            let row = tbl.insertRow()
+            row.insertCell().innerHTML = ele.pairName + ele.side
+          })
+      }
+    }
+  }
+
+  pairreq.open("GET", "/api/myorders")
+  pairreq.send()
+}
+</script>
+
+</head>
+
+<body onload=onload()>
+
+</body>
+</html>

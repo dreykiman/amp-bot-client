@@ -20,6 +20,8 @@
     "babel-core": "^6.26.3",
     "ethers": "^4.0.7",
     "express": "^4.16.4",
+    "fs": "0.0.1-security",
+    "memory-cache": "^0.2.0",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.5",
     "ws": "^6.1.0"
