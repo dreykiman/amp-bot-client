@@ -28,38 +28,19 @@ td.asks{
 
 <script>
 
+var btn = document.createElement("button")
+
 function onload() {
-  var btn0 = document.createElement("button")
-  btn0.innerHTML= "POPULATE"
-  btn0.onclick = function() {
+  btn.innerHTML= "POPULATE"
+
+  btn.onclick = function() {
     let popget = new XMLHttpRequest()
-
-    btn0.innerHTML = "POPULATING..."
-    btn0.disabled = true
-
-    popget.onreadystatechange = function() {
-      if (this.readyState == 4) {
-        btn0.innerHTML = "POPULATE AGAIN"
-        btn0.disabled = false
-      }
-    }
 
     popget.open("GET", "/api/populate")
     popget.send()
   }
 
-  var btn1 = document.createElement("button")
-  btn1.innerHTML= "CANCEL ALL"
-
-  btn1.onclick = function() {
-    let popget = new XMLHttpRequest()
-
-    popget.open("GET", "/api/cancelall")
-    popget.send()
-  }
-
-  document.body.appendChild(btn0)
-  document.body.appendChild(btn1)
+  document.body.appendChild(btn)
 
   let pairreq = new XMLHttpRequest()
 
@@ -72,39 +53,11 @@ function onload() {
 
       let ws = new WebSocket("ws://52.78.227.253:8081/socket")
       let rows = {}
-      let ob = {}
-
-      ws.onmessage = ev => {
-        let data = JSON.parse(ev.data)
-        data = data.event && data.event.payload
-
-        console.log(data)
-
-        if(data.asks!=null && data.bids!=null) {
-          ["bids", "asks"].forEach( (name,icell) => {
-            let pair = data.pair
-
-            data[name].forEach( ele => {
-              if( ele.amount == "0")
-                delete ob[pair][name][ele.pricepoint]
-              else
-                ob[pair][name][ele.pricepoint] = ele.amount
-            })
-            let line = Object.keys(ob[pair][name]).sort( (a,b) => name==="asks" ? a-b : b-a)
-              .map( price => 'price: '+price+', amount: '+ob[pair][name][price] )
-              .join("<br>")
-
-            rows[pair].cells[icell].innerHTML = line
-          })
-
-        }
-      }
- 
 
       data.filter( ele => ele.quoteTokenSymbol==="WETH" )
+//        .slice(0,3)
         .forEach( ele => {
           let pairName = ele.baseTokenSymbol+"/"+ele.quoteTokenSymbol
-
           let row = tbl.insertRow()
           row.className = "pairName"
           row.insertCell().innerHTML = pairName
@@ -114,10 +67,9 @@ function onload() {
           rows[pairName].insertCell().className = 'bids'
           rows[pairName].insertCell().className = 'asks'
 
-          ob[pairName] = {asks: {}, bids: {}}
 
           ws.addEventListener("open", _ => { ws.send(JSON.stringify({
-            "channel": "orderbook",
+            "channel": "raw_orderbook",
             "event": {
               "type": "SUBSCRIBE",
               "payload": {
@@ -127,7 +79,17 @@ function onload() {
               }
             }
           }))})
-     })
+
+
+          let ob = {asks: {}, bids: {}}
+
+
+          ws.onmessage = ev => {
+            let data = JSON.parse(ev.data)
+
+            console.log(JSON.stringify(data))
+          }
+      })
     }
   }
 

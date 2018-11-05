@@ -6,6 +6,9 @@ export const cancelall = (req, res) => {
     .then( data => {
       res.status(200).json(data)
     })
+    .catch( err => {
+      res.json({ msg: err.toString() })
+    })
 }
 
 export const cancel = (req, res) => {
@@ -13,13 +16,19 @@ export const cancel = (req, res) => {
     .then( data => {
       res.status(200).json(data)
     })
+    .catch( err => {
+      res.json({ msg: err.toString() })
+    })
 }
 
 
 export const addorder = (req, res) => {
-  trader.add_order()
+  trader.add_order(req.query)
     .then( data => {
       res.status(200).json(data)
+    })
+    .catch( err => {
+      res.json({ msg: err.toString() })
     })
 }
 
@@ -29,6 +38,9 @@ export const populate = (req, res) => {
     .then( data => {
       res.status(200).json(data)
     })
+    .catch( err => {
+      res.json({ msg: err.toString() })
+    })
 }
 
 
@@ -36,6 +48,9 @@ export const myorders = (req, res) => {
   client.my_orders()
     .then( data => {
        res.status(200).json(data)
+    })
+    .catch( err => {
+      res.json({ msg: err.toString() })
     })
 }
 
