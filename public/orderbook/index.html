@@ -78,7 +78,7 @@ function onload() {
         let data = JSON.parse(ev.data)
         data = data.event && data.event.payload
 
-        console.log(data)
+        console.log(JSON.stringify(data))
 
         if(data.asks!=null && data.bids!=null) {
           ["bids", "asks"].forEach( (name,icell) => {
@@ -123,7 +123,6 @@ function onload() {
               "payload": {
                 "baseToken": ele.baseTokenAddress,
                 "quoteToken": ele.quoteTokenAddress,
-                "name": pairName
               }
             }
           }))})
