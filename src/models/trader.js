@@ -23,27 +23,20 @@ export const add_order = query => {
 
 
 export const cancel_all = _ => {
-  return client.my_orders()
-    .then( data => 
-      data.data.filter( ele => ele.status!="FILLED" && ele.status!="CANCELLED")
-    )
-    .then( orders => {
-      orders.forEach( ele => {
-        client.cancel_order(ele.hash)
-      })
+  let cancels = client.my_orders()
+    .filter( ele => ele.status!="FILLED" && ele.status!="CANCELLED")
+    .map( order => {
+      client.cancel_order(order.hash)
+        .catch(msg => msg.toString())
     })
+  return Promise.all(cancels)
 }
 
 
-const updateOrderbook = data => {
-  data.data.forEach( ele => {
-    Object.assign(orderbook[ele.hash], ele)
-  })
-  return client.pairs()
-}
 
+const getPricesForPair = pair => {
+  client.subscribe(pair.baseTokenAddress, pair.quoteTokenAddress)
 
-const getPrices = pair => {
   return binance.getPrice(pair.baseTokenSymbol)
     .then( price => {
       return { address: pair.baseTokenAddress, prices: price }
@@ -52,25 +45,20 @@ const getPrices = pair => {
 }
 
 
-const cancelOrders = tok => {
-if(tok==null)
-  return Promise.resolve(null)
+const cancelOrdersForPair = tok => {
+  if (tok===null) return Promise.reject(null)
 
   let myorders = Object.values(orderbook)
     .filter( ord => ord.status!="CANCELLED" && ord.status!="FILLED" )
   let cancels = myorders.filter( ord => ord.baseToken === tok.address )
-    .map( ord => client.cancel_order(ord.hash) )
+    .map( ord => client.cancel_order(ord.hash).catch(msg => msg) )
 
   return Promise.all( cancels )
-    .then( _ => tok )
-    .catch( err => { msg: err.toString() } )
+    .then( _ => prepOrdersForPair(tok) )
 }
 
 
-const makeOrders = tok => {
-if(tok==null)
-  return Promise.resolve(null)
-
+const prepOrdersForPair = tok => {
   let mid = getPricePoints(tok.prices[0].ave).add(getPricePoints(tok.prices[1].ave)).div(2)
   let orders = []
   tok.prices.forEach( (price, ind) => {
@@ -79,12 +67,12 @@ if(tok==null)
       return ind===0 ? xx.add(2).lt(mid) : xx.sub(2).gt(mid)
     })
     .forEach( ds => {
-      let xx = price.ave - ds*price.dev
+      let xx = price.ave + ds*price.dev
       let yy = gauss(xx, price.ave, price.dev)
       orders.push({
         amount: 0.01*yy/gauss(price.ave, price.ave, price.dev)/xx,
         price: xx,
-        userAddress: "0xf2934427c36ba897f9be6ed554ed2dbce3da1c68",
+        userAddress: client.wallet.address,
         exchangeAddress: "0x2768f1543ec9145cb680fc9699672c1a3226346d",
         makeFee: 0,
         takeFee: 0,
@@ -99,28 +87,25 @@ if(tok==null)
 }
 
 
-const addOrders = ords => {
-if(ords==null)
-  return Promise.resolve(null)
+const submitOrders = ords => {
+  if (ords===null) return null
 
-  let news = ords.map( ord => client.new_order(ord) )
+  let news = ords.map( ord => client.new_order(ord).catch("test") )
   return Promise.all(news)
 }
 
 
 export const populate = _ => {
-  let allorders = client.my_orders()
-    .then( updateOrderbook )
-    .then( pairs => {
-      let neworders = pairs
-        .map( getPrices )
-        .map( ele => ele.then(cancelOrders) )
-        .map( ele => ele.then(makeOrders) )
-        .map( ele => ele.then(addOrders) )
-      return Promise.all(neworders)
-    })
-    .catch( err => { return { msg: err.toString() } } )
+  let allorders = client.pairs()
+    .map( getPricesForPair )
+    .map( ele =>
+      ele.then(cancelOrdersForPair)
+        .then(prepOrdersForPair)
+        .then(submitOrders)
+        .catch("test")
+ )
 
-  return allorders
+  return Promise.all(allorders)
+    .catch( err => { return { msg: err.toString() } } )
 }
 

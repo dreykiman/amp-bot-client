@@ -45,22 +45,10 @@ export const populate = (req, res) => {
 
 
 export const myorders = (req, res) => {
-  client.my_orders()
-    .then( data => {
-       res.status(200).json(data)
-    })
-    .catch( err => {
-      res.json({ msg: err.toString() })
-    })
+  res.status(200).json(client.my_orders())
 }
 
 
 export const pairs = (req, res) => {
-  client.pairs()
-    .then( data => {
-      res.json(data)
-    })
-    .catch( _ => {
-      res.json({msg: "can't access AMP REST API"})
-    })
+  res.json(client.pairs())
 }
