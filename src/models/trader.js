@@ -33,8 +33,6 @@ export const cancel_all = _ => {
 
 
 const getPricesForPair = pair => {
-  client.subscribe(pair.baseTokenAddress, pair.quoteTokenAddress)
-
   return binance.getPrice(pair.baseTokenSymbol)
     .then( price => {
       return { address: pair.baseTokenAddress, prices: price }
