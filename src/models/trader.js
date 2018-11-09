@@ -4,7 +4,6 @@ import * as binance from './binance'
 import { gauss, getPricePoints } from '../utils'
 
 
-
 export const add_order = query => {
   let ord = {
     amount: 0.001,
@@ -18,6 +17,7 @@ export const add_order = query => {
     quoteTokenAddress: "0xa3f9eacdb960d33845a4b004974feb805e05c4a9",
   }
   Object.assign(ord, query)
+
   return client.new_order(ord)
 }
 
@@ -26,6 +26,7 @@ export const cancel_all = _ => {
   let cancels = client.my_orders()
     .filter( ele => ele.status!="FILLED" && ele.status!="CANCELLED")
     .map( order => client.cancel_order(order.hash) )
+
   return Promise.all(cancels)
 }
 
@@ -84,23 +85,22 @@ const prepOrdersForPair = tok => {
 
 const submitOrders = ords => {
   let news = ords.map( ord => client.new_order(ord)
-    .then( ord => `${ord.event.type} ${ord.event.payload.pairName}`)
+//    .then( ord => `${ord.event.type} ${ord.event.payload.pairName}`)
     .catch( msg => {
-console.log(msg.toString())
-console.log(ord)
-return {fail2submit: msg.toString()}
-}) )
+      throw new Error(msg.toString())
+    }) )
+
   return Promise.all(news)
 }
 
 
 export const populate = _ => {
-  let allorders = client.pairs()//.slice(0,2)
+  let allorders = client.pairs()
     .map( pair => getPricesForPair(pair)
      .then(cancelOrdersForPair)
      .then(prepOrdersForPair)
      .then(submitOrders)
-     .catch(msg => {return {err: msg.toString()}}))
+     .catch(msg => {return {err: msg.toString(), pair: pair}}))
 
   return Promise.all(allorders)
 }
