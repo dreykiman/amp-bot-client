@@ -25,10 +25,7 @@ export const add_order = query => {
 export const cancel_all = _ => {
   let cancels = client.my_orders()
     .filter( ele => ele.status!="FILLED" && ele.status!="CANCELLED")
-    .map( order => {
-      client.cancel_order(order.hash)
-        .catch(msg => msg.toString())
-    })
+    .map( order => client.cancel_order(order.hash) )
   return Promise.all(cancels)
 }
 
@@ -41,34 +38,32 @@ const getPricesForPair = pair => {
     .then( price => {
       return { address: pair.baseTokenAddress, prices: price }
     })
-    .catch( _ => null)
 }
 
 
 const cancelOrdersForPair = tok => {
-  if (tok===null) return Promise.reject(null)
-
   let myorders = Object.values(orderbook)
     .filter( ord => ord.status!="CANCELLED" && ord.status!="FILLED" )
   let cancels = myorders.filter( ord => ord.baseToken === tok.address )
-    .map( ord => client.cancel_order(ord.hash).catch(msg => msg) )
+    .map( ord => client.cancel_order(ord.hash))
 
-  return Promise.all( cancels )
-    .then( _ => prepOrdersForPair(tok) )
+  return Promise.all( cancels ).then( _ => tok )
 }
 
 
 const prepOrdersForPair = tok => {
   let mid = getPricePoints(tok.prices[0].ave).add(getPricePoints(tok.prices[1].ave)).div(2)
   let orders = []
+
   tok.prices.forEach( (price, ind) => {
-    [-2, -1, 0, 1, 2].filter( ds => {
+    [-2,-1.5,-1,-0.5,0,0.5,1,1.5,2].filter( ds => {
       let xx = getPricePoints(price.ave + ds*price.dev)
       return ind===0 ? xx.add(2).lt(mid) : xx.sub(2).gt(mid)
     })
     .forEach( ds => {
       let xx = price.ave + ds*price.dev
       let yy = gauss(xx, price.ave, price.dev)
+
       orders.push({
         amount: 0.01*yy/gauss(price.ave, price.ave, price.dev)/xx,
         price: xx,
@@ -88,24 +83,25 @@ const prepOrdersForPair = tok => {
 
 
 const submitOrders = ords => {
-  if (ords===null) return null
-
-  let news = ords.map( ord => client.new_order(ord).catch("test") )
+  let news = ords.map( ord => client.new_order(ord)
+    .then( ord => `${ord.event.type} ${ord.event.payload.pairName}`)
+    .catch( msg => {
+console.log(msg.toString())
+console.log(ord)
+return {fail2submit: msg.toString()}
+}) )
   return Promise.all(news)
 }
 
 
 export const populate = _ => {
-  let allorders = client.pairs()
-    .map( getPricesForPair )
-    .map( ele =>
-      ele.then(cancelOrdersForPair)
-        .then(prepOrdersForPair)
-        .then(submitOrders)
-        .catch("test")
- )
+  let allorders = client.pairs()//.slice(0,2)
+    .map( pair => getPricesForPair(pair)
+     .then(cancelOrdersForPair)
+     .then(prepOrdersForPair)
+     .then(submitOrders)
+     .catch(msg => {return {err: msg.toString()}}))
 
   return Promise.all(allorders)
-    .catch( err => { return { msg: err.toString() } } )
 }
 
