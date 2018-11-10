@@ -40,17 +40,16 @@ const getPricesForPair = pair => {
 }
 
 
-const cancelOrdersForPair = tok => {
+const getCancelOrdersForPair = tok => {
   let myorders = Object.values(orderbook)
     .filter( ord => ord.status!="CANCELLED" && ord.status!="FILLED" )
   let cancels = myorders.filter( ord => ord.baseToken === tok.address )
-    .map( ord => client.cancel_order(ord.hash))
 
-  return Promise.all( cancels ).then( _ => tok )
+  return cancels
 }
 
 
-const prepOrdersForPair = tok => {
+const getNewOrdersForPair = tok => {
   let mid = getPricePoints(tok.prices[0].ave).add(getPricePoints(tok.prices[1].ave)).div(2)
   let orders = []
 
@@ -95,10 +94,14 @@ const submitOrders = ords => {
 export const populate = _ => {
   let allorders = client.pairs()
     .map( pair => getPricesForPair(pair)
-     .then(cancelOrdersForPair)
-     .then(prepOrdersForPair)
-     .then(submitOrders)
-     .catch(msg => {return {err: msg.toString(), pair: pair}}))
+      .then( tok => {
+        let cancels = getCancelOrdersForPair(tok)
+        let newords = getNewOrdersForPair(tok)
+        let allords = [...cancels, ...newords]
+        allords.sort( (a,b) => {
+        })
+      }).catch(msg => {return {err: msg.toString(), pair: pair}})
+    )
 
   return Promise.all(allorders)
 }
