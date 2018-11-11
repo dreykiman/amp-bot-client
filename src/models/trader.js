@@ -98,7 +98,7 @@ const sortOrders = (a, b) => {
 const submitOrder = (ordlist, ord) => {
   ord.time = Date.now()
   if ('hash' in ord) {
-    return client.cancel_order(ord.hash+(ordlist.length>0 ? "a": ""))
+    return client.cancel_order(ord.hash)
       .then( cancelled => {
         cancelled.time = Date.now()
         ordlist.push(cancelled)
