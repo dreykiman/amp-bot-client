@@ -58,6 +58,8 @@ function populate() {
               if (ord.event.payload) {
                 let pld = ord.event.payload
                 pairName = pld.pairName
+                if (pld.status=="CANCELLED")
+                  return `<del>${pld.side} ${pld.pricepoint} ${pld.amount}</del>`
                 return `${pld.side} ${pld.pricepoint} ${pld.amount}`
               } else console.log(ord.toString())
             })
