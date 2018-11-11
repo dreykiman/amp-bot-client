@@ -149,7 +149,7 @@ const prepOrders = pair => {
 }
  
 export const populate = _ => {
-  let allorders = client.pairs().slice(0,1)
+  let allorders = client.pairs()
     .map(prepOrders)
 
   return Promise.all(allorders)
