@@ -144,7 +144,7 @@ const prepOrders = pair => {
 
 //        .map(ele=>`${ele.pricepoint} ${ele.pairName}`)
     }).catch(msg => {
-      return {err: msg, pair: pair}
+      return {msg: msg, pair: pair}
     })
 }
  

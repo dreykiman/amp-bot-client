@@ -39,7 +39,7 @@ export const getPrice = (token) => {
           return getPriceRange( data[name] )
         })
       }
-      throw new Error(`no data available for specified token: https://api.binance.com/api/v1/depth?symbol=${token}ETH `)
+      throw { err: `no data available for specified token: https://api.binance.com/api/v1/depth?symbol=${token}ETH ` }
     })
 }
 
