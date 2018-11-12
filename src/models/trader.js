@@ -20,6 +20,8 @@ export const add_order = query => {
   Object.assign(ord, query)
 
   return client.new_order(ord)
+    .catch(myError)
+    .then(console.log)
 }
 
 
