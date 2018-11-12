@@ -89,9 +89,9 @@ const sortOrders = (a, b) => {
   if (aprice.lt(bprice)) return 1
   else if (aprice.gt(bprice)) return -1
 
-  //cancel orders go first
-  if ('hash' in a) return 1
-  return -1
+  //cancel
+  if (a.side=='BUY') return -1
+  return 1
 }
 
 
@@ -145,7 +145,7 @@ const prepOrders = pair => {
 }
  
 export const populate = _ => {
-  let allorders = client.pairs().slice(0,10)
+  let allorders = client.pairs().slice(1,100)
     .map(prepOrders)
 
   return Promise.all(allorders)
