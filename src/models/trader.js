@@ -2,7 +2,7 @@ import { utils } from 'ethers'
 import { orderbook } from 'amp-node-api-client'
 import client from './amp-client'
 import * as binance from './binance'
-import { gauss, getPricePoints } from '../utils'
+import { gauss, getPricePoints, myError } from '../utils'
 
 
 export const add_order = query => {
@@ -113,43 +113,39 @@ const submitOrder = (ordlist, ord) => {
       return ordlist
     })
 
-  
-//  let news = ords.map( ord => client.new_order(ord)
-//    .then( ord => `${ord.event.type} ${ord.event.payload.pairName}`)
-//    .catch( msg => {
-//      throw new Error(msg.toString())
-//    }) )
-//  return Promise.all(news)
 }
 
 
 const prepOrders = pair => {
   return getPricesForPair(pair)
     .then( tok => {
-      let cancels = getCancelOrdersForPair(tok)
+      let oldords = getCancelOrdersForPair(tok)
 //        .map(ele=>"cancel: "+Object.keys(ele).join('/'))
       let newords = getNewOrdersForPair(tok)
 //        .map(ele=>"neword: "+Object.keys(ele).join('/'))
-      let allords = [...cancels, ...newords]
 
-      allords.sort( sortOrders )
+      let newbuys = [...oldords.filter(ele=>ele.side=="SELL"), ...newords.filter(ele=>ele.side=="BUY")]
+      let newsells = [...oldords.filter(ele=>ele.side=="BUY"), ...newords.filter(ele=>ele.side=="SELL")]
 
-      return allords.reduce( (tot, ord) => {
-        tot = tot.then( ordlist => submitOrder(ordlist, ord).catch( msg => { throw {msg: msg, list: ordlist, order: ord} } ) )
-        return tot
-      }, Promise.resolve([]))
-//      .then(ordlist => 
-//        ordlist.map(ord=>ord.pricepoint)
-//      )
+      newbuys.sort( sortOrders )
+      newbuys.reverse()
+      newsells.sort( sortOrders )
 
+      let ords = [newbuys,newsells].map( queue => 
+        queue.reduce( (tot, ord) => {
+          tot = tot.then( ordlist => submitOrder(ordlist, ord).catch( msg => { throw myError(msg, {list: ordlist, order: ord}) } ) )
+          return tot
+        }, Promise.resolve([]))
+        .catch( msg => myError(msg, {pair: pair}) )
+      )
+
+      return Promise.all(ords)
+    }).catch(myError)
 //        .map(ele=>`${ele.pricepoint} ${ele.pairName}`)
-    }).catch(msg => {
-      return {msg: msg, pair: pair}
-    })
 }
  
 export const populate = _ => {
-  let allorders = client.pairs()
+  let allorders = client.pairs().slice(0,10)
     .map(prepOrders)
 
   return Promise.all(allorders)
