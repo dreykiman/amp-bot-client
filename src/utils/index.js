@@ -18,3 +18,5 @@ export const getPricePoints = price => {
     .mul(priceMultiplier)
     .div(utils.bigNumberify(pricePrecisionMultiplier))
  }
+
+export const myError = (msg, supplemental={}) => Object.assign({err: msg.toString(), msg: msg}, supplemental)
