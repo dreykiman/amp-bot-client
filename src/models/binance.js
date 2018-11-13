@@ -28,7 +28,7 @@ const getPriceRange = data => {
   let dev = data.reduce( calcStandardDeviation, {total: 0, dev: 0, ave: ave, amount: 0} )
   dev = Math.sqrt( dev.dev/(dev.amount-1) )
 
-  return {dev: dev*1000, ave: ave*1000}
+  return {dev: dev, ave: ave}
 }
 
 export const getPrice = (token) => {
