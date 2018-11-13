@@ -10,7 +10,7 @@ export const add_order = query => {
     amount: 0.001,
     price: 0.001,
     userAddress: "0xf2934427c36ba897f9be6ed554ed2dbce3da1c68",
-    exchangeAddress: "0x2768f1543ec9145cb680fc9699672c1a3226346d",
+    exchangeAddress: "0x344F3B8d79C0A516b43651e26cC4785b07fb6aA1",
     makeFee: 0,
     takeFee: 0,
     side: "BUY",
@@ -28,7 +28,10 @@ export const add_order = query => {
 export const cancel_all = _ => {
   let cancels = client.my_orders()
     .filter( ele => ele.status!="FILLED" && ele.status!="CANCELLED")
-    .map( order => client.cancel_order(order.hash) )
+    .map( order => {
+      return client.cancel_order(order.hash)
+        .catch(myError)
+    })
 
   return Promise.all(cancels)
 }
@@ -38,7 +41,7 @@ export const cancel_all = _ => {
 const getPricesForPair = pair => {
   return binance.getPrice(pair.baseTokenSymbol)
     .then( price => {
-      return { address: pair.baseTokenAddress, prices: price }
+      return { base: pair.baseTokenAddress, prices: price, quote: pair.quoteTokenAddress}
     })
 }
 
@@ -46,7 +49,7 @@ const getPricesForPair = pair => {
 const getCancelOrdersForPair = tok => {
   let myorders = Object.values(orderbook)
     .filter( ord => ord.status!="CANCELLED" && ord.status!="FILLED" )
-  let cancels = myorders.filter( ord => ord.baseToken === tok.address )
+  let cancels = myorders.filter( ord => ord.baseToken === tok.base)
 
   return cancels
 }
@@ -70,12 +73,12 @@ const getNewOrdersForPair = tok => {
         price: xx,
         pricepoint: getPricePoints(xx).toString(),
         userAddress: client.wallet.address,
-        exchangeAddress: "0x2768f1543ec9145cb680fc9699672c1a3226346d",
+        exchangeAddress: "0x344F3B8d79C0A516b43651e26cC4785b07fb6aA1",
         makeFee: 0,
         takeFee: 0,
         side: ["BUY", "SELL"][ind],
-        baseTokenAddress: tok.address,
-        quoteTokenAddress: "0xa3f9eacdb960d33845a4b004974feb805e05c4a9"
+        baseTokenAddress: tok.base,
+        quoteTokenAddress: tok.quote
       })
     })
   })
@@ -151,5 +154,6 @@ export const populate = _ => {
     .map(prepOrders)
 
   return Promise.all(allorders)
+    .catch(myError)
 }
 
