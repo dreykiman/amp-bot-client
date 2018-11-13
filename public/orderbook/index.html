@@ -23,10 +23,13 @@ td.asks{
   border: 1px solid red;
   color: red;
 }
+
+/*
 td.debug{
-  min-width: 200px,
+  min-width: 200px;
   border: 1px solid black;
 }
+*/
 </style>
 
 <script>
@@ -47,6 +50,7 @@ function populate() {
         btn0.innerHTML = "POPULATE AGAIN"
         btn0.disabled = false
 
+/*
         let data = JSON.parse(this.responseText)
         data.forEach( ele => {
           let pairName;
@@ -63,15 +67,17 @@ function populate() {
                 return `${pld.side} ${pld.pricepoint} ${pld.amount}`
               } else console.log(ord.toString())
             })
-
+*/
+/*
             if(pairName==null) console.log(ords)
             else {
               ['BUY', 'SELL'].forEach( (name, ind) => {
                 rows[pairName].cells[2+ind].innerHTML = ords.filter(ele=>ele.includes(name)).join("<br>")
               })
             }
-          }
-        })
+*/
+//          }
+///        })
       }
     }
 

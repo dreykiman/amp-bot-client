@@ -9,8 +9,8 @@ const round = (n, decimals = '2') => Math.round(n * Math.pow(10, decimals)) / Ma
 
 
 export const getPricePoints = price => {
-  let pricePrecisionMultiplier = 1e6
-  let priceMultiplier = utils.bigNumberify('1000000') //1e6
+  let pricePrecisionMultiplier = 1e9
+  let priceMultiplier = utils.bigNumberify('1000000000') //1e6
   price = round(price * pricePrecisionMultiplier, 0)
 
   return utils
