@@ -65,9 +65,9 @@ function populate() {
 
 function add_order(pricepoint, amount, pair, side) {
   let amountPrecisionMultiplier = 1e6
-  let pricePrecisionMultiplier = 1e6
+  let pricePrecisionMultiplier = 1e9
   let amountMultiplier = ethers.utils.bigNumberify('1000000000000000000') //1e18
-  let priceMultiplier = ethers.utils.bigNumberify('1000000') //1e6
+  let priceMultiplier = ethers.utils.bigNumberify('1000000000') //1e6
 
   amount = ethers.utils.bigNumberify(amount)
     .mul(ethers.utils.bigNumberify(amountPrecisionMultiplier))
@@ -126,22 +126,30 @@ function onload() {
       }, {})
 
       let ws = new WebSocket("ws://52.78.227.253:8081/socket")
-      let ob = {}
 
       ws.onmessage = ev => {
         let data = JSON.parse(ev.data)
-        if(data.channel && data.channel == "raw_orderbook"){
-          data = data.event && data.event.payload
+console.log(data)
+        if(data.channel && data.channel == "raw_orderbook" && data.event){
+          let pair, orders
+          if (data.event.type==="INIT"){
+            pair = data.event.payload && data.event.payload.pairName
+            data = data.event.payload && data.event.payload.orders
+          } else if(data.event.payload) {
+            data = data.event.payload
+            pair = data[0].pairName
+          }
+
           if (data!=null){
-            let pr = data[0].pairName
+
             data.forEach(ele => {
               orderbook[ele.hash] = ele
             })
 
             let acts = ["BUY", "SELL"]
             acts.forEach( (name, ind) => {
-              rows[pr].cells[2+ind].innerHTML = ""
-              let ords = Object.values(orderbook).filter(ele=>ele.side==name && ele.pairName == pr && ele.status!="CANCELLED" && ele.status!="FILLED")
+              rows[pair].cells[ind].innerHTML = ""
+              let ords = Object.values(orderbook).filter(ele=>ele.side==name && ele.pairName == pair && ele.status!="CANCELLED" && ele.status!="FILLED")
                   .sort( (a,b) => (parseInt(a.pricepoint) > parseInt(b.pricepoint)) ? 1 : -1)
               if (name=='BUY') ords.reverse()
 
@@ -152,40 +160,20 @@ function onload() {
               }
 
               let btn = document.createElement("button")
-              btn.onclick = () => add_order(pricepoint, amount, pr, name=="BUY" ? "SELL" : "BUY")
-              btn.innerHTML = "add: "+pricepoint+" "+amount
-              rows['header'+pr].cells[ind].innerHTML = pr
-              rows['header'+pr].cells[ind].appendChild(document.createElement("br"))
-              rows['header'+pr].cells[ind].appendChild(btn)
-              rows['header'+pr].cells[ind].appendChild(document.createElement("br"))
+              btn.onclick = () => add_order(pricepoint, amount, pair, name=="BUY" ? "SELL" : "BUY")
+              btn.innerHTML = (name=="BUY" ? "SELL" : "BUY")+" "+pricepoint+" "+amount
+              rows['header'+pair].cells[ind].innerHTML = pair
+              rows['header'+pair].cells[ind].appendChild(document.createElement("br"))
+              rows['header'+pair].cells[ind].appendChild(btn)
+              rows['header'+pair].cells[ind].appendChild(document.createElement("br"))
 
               ords.forEach( ele => {
                 let btn = document.createElement("button")
                 btn.innerHTML = "cancel: "+ele.pricepoint+" "+ele.amount
                 btn.onclick = () => { cancel_order(ele.hash) }
-                rows[pr].cells[2+ind].appendChild(btn)
-                rows[pr].cells[2+ind].appendChild(document.createElement("br"))
+                rows[pair].cells[ind].appendChild(btn)
+                rows[pair].cells[ind].appendChild(document.createElement("br"))
               })
-            })
-          }
-        } else if(data.channel && data.channel == "orderbook"){
-          data = data.event && data.event.payload
-
-          if(data.asks!=null && data.bids!=null) {
-            ["bids", "asks"].forEach( (name,icell) => {
-              let pair = data.pair
-  
-              data[name].forEach( ele => {
-                if( ele.amount == "0")
-                  delete ob[pair][name][ele.pricepoint]
-                else
-                  ob[pair][name][ele.pricepoint] = ele.amount
-              })
-              let line = Object.keys(ob[pair][name]).sort( (a,b) => name==="asks" ? a-b : b-a)
-                .map( price => 'price: '+price+', amount: '+ob[pair][name][price] )
-                .join("<br>")
-  
-              rows[pair].cells[icell].innerHTML = line
             })
           }
         }
@@ -206,22 +194,8 @@ function onload() {
          
           rows[pairName].insertCell().className = 'bids'
           rows[pairName].insertCell().className = 'asks'
-          rows[pairName].insertCell().className = 'debug'
-          rows[pairName].insertCell().className = 'debug'
-
-          ob[pairName] = {asks: {}, bids: {}}
 
           ws.addEventListener("open", _ => {
-            ws.send(JSON.stringify({
-              "channel": "orderbook",
-              "event": {
-                "type": "SUBSCRIBE",
-                "payload": {
-                  "baseToken": ele.baseTokenAddress,
-                  "quoteToken": ele.quoteTokenAddress,
-                }
-              }
-            }))
             ws.send(JSON.stringify({
               "channel": "raw_orderbook",
               "event": {
