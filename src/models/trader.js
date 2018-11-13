@@ -21,7 +21,7 @@ export const add_order = query => {
 
   return client.new_order(ord)
     .catch(myError)
-    .then(console.log)
+//    .then(console.log)
 }
 
 
