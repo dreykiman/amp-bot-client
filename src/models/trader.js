@@ -145,10 +145,12 @@ const prepOrders = pair => {
 }
  
 export const populate = _ => {
-  let allorders = client.pairs().slice(1,40)
-    .map(prepOrders)
-
-  return Promise.all(allorders)
+  return client.pairs()
+    .reduce( (lastpair, pair) => {
+      return lastpair.then( _ => {
+        return prepOrders(pair)
+      })
+    }, Promise.resolve())
     .catch(myError)
 }
 
