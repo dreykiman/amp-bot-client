@@ -4,7 +4,7 @@ import { Wallet, getDefaultProvider } from 'ethers'
 
 let keys = JSON.parse(fs.readFileSync("keys", "utf8"))
 let provider = getDefaultProvider('rinkeby')
-let wallet = new Wallet(keys.AMP2, provider)
+let wallet = new Wallet(keys.AMP1, provider)
 
 const client = new ClientAPI(wallet)
 

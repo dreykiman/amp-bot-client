@@ -2,14 +2,14 @@ import { utils } from 'ethers'
 import { orderbook } from 'amp-node-api-client'
 import client from './amp-client'
 import * as binance from './binance'
-import { gauss, getPricePoints, myError } from '../utils'
+import { gauss, getPricePoints, sortOrders, myError, reverseAmount, reversePrice } from '../utils'
 
 
 export const add_order = query => {
   let ord = {
     amount: 0.001,
     price: 0.001,
-    userAddress: "0xf2934427c36ba897f9be6ed554ed2dbce3da1c68",
+    userAddress: client.wallet.address,
     exchangeAddress: "0x344F3B8d79C0A516b43651e26cC4785b07fb6aA1",
     makeFee: 0,
     takeFee: 0,
@@ -153,4 +153,42 @@ export const populate = _ => {
     }, Promise.resolve())
     .catch(myError)
 }
+
+const take = pair => {
+  let trds = ['SELL', 'BUY'].map(side => {
+    let ords = Object.values(orderbook)
+      .filter(ele => pair.baseTokenAddress === ele.baseToken && pair.quoteTokenAddress === ele.quoteToken)
+      .filter(ele => ele.side===side && ele.status!="FILLED" && ele.status!="CANCELLED")
+      .sort(sortOrders)
+
+    if (side==='BUY') ords.reverse()
+    
+  
+    if (ords.length>0) {
+      let ord = {
+        amount: reverseAmount(ords[0].amount),
+        price: reversePrice(ords[0].pricepoint),
+        userAddress: client.wallet.address,
+        exchangeAddress: "0x344F3B8d79C0A516b43651e26cC4785b07fb6aA1",
+        makeFee: 0,
+        takeFee: 0,
+        side: side==="BUY" ? 'SELL' : 'BUY',
+        baseTokenAddress: ords[0].baseToken,
+        quoteTokenAddress: ords[0].quoteToken
+      }
+      return client.new_order(ord)
+        .catch(myError)
+    }
+  
+    return Promise.resolve([])
+  })
+
+  return Promise.all(trds)
+}
+
+const takeAll = () => {
+  return Promise.all(client.pairs().map(take))
+}
+
+export { take, takeAll }
 

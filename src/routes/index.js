@@ -8,6 +8,7 @@ router.get('/cancel', controller.cancel)
 router.get('/addorder', controller.addorder)
 router.get('/myorders', controller.myorders)
 router.get('/populate', controller.populate)
+router.get('/take', controller.take)
 router.get('/pairs', controller.pairs)
 
 export default router
