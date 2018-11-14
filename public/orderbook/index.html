@@ -2,6 +2,8 @@
 <head>
 <title>Orderbook</title>
 
+<link rel="stylesheet" type="text/css" href="dots.css">
+
 <style>
 
 tr.pairName td {
@@ -121,6 +123,7 @@ function onload() {
         if(data.asks!=null && data.bids!=null) {
           ["bids", "asks"].forEach( (name,icell) => {
             let pair = data.pair
+document.getElementById("lastpair").innerHTML = pair
 
             data[name].forEach( ele => {
               if( ele.amount == "0")
@@ -179,6 +182,7 @@ function onload() {
 </head>
 
 <body onload=onload()>
+<h3><p class="saving">Last pair changed: <span id='lastpair'></span><span>.</span><span>.</span><span>.</span></p><h3>
 
 </body>
 </html>
