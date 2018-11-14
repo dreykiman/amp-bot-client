@@ -21,7 +21,7 @@ export const add_order = query => {
 
   return client.new_order(ord)
     .catch(myError)
-//    .then(console.log)
+    .then(console.log)
 }
 
 
@@ -87,35 +87,21 @@ const getNewOrdersForPair = tok => {
 }
 
 
-const sortOrders = (a, b) => {
-  let aprice = utils.bigNumberify( a.pricepoint )
-  let bprice = utils.bigNumberify( b.pricepoint )
 
-  if (aprice.lt(bprice)) return 1
-  else if (aprice.gt(bprice)) return -1
-
-  //cancel
-  if (a.side=='BUY') return -1
-  return 1
-}
-
-
-const submitOrder = (ordlist, ord) => {
+const submitOrder = ord => {
   ord.time = Date.now()
   if ('hash' in ord) {
     return client.cancel_order(ord.hash)
       .then( cancelled => {
         cancelled.time = Date.now()
-        ordlist.push(cancelled)
-        return ordlist
+        return cancelled
       })
   }
 
   return client.new_order(ord)
     .then( added => {
       added.time = Date.now()
-      ordlist.push(added)
-      return ordlist
+      return added
     })
 
 }
@@ -125,32 +111,41 @@ const prepOrders = pair => {
   return getPricesForPair(pair)
     .then( tok => {
       let oldords = getCancelOrdersForPair(tok)
-//        .map(ele=>"cancel: "+Object.keys(ele).join('/'))
       let newords = getNewOrdersForPair(tok)
-//        .map(ele=>"neword: "+Object.keys(ele).join('/'))
 
-      let newbuys = [...oldords.filter(ele=>ele.side=="SELL"), ...newords.filter(ele=>ele.side=="BUY")]
-      let newsells = [...oldords.filter(ele=>ele.side=="BUY"), ...newords.filter(ele=>ele.side=="SELL")]
+      let highestbuy = [...oldords, ...newords]
+        .filter(ele=>ele.side==='BUY')
+        .reduce( (high, ord) => {
+          let a = utils.bigNumberify(high.pricepoint)
+          let b = utils.bigNumberify(ord.pricepoint)
+          if (b.gt(a)) high = ord
+          return high
+        }, {pricepoint: 0} )
 
-      newbuys.sort( sortOrders )
-      newbuys.reverse()
-      newsells.sort( sortOrders )
+      // if highestbuy in new orders
+      let seq = ['SELL', 'BUY']
+      // if highestbuy in old orders
+      if ('hash' in highestbuy) seq.reverse()
 
-      let ords = [newbuys,newsells].map( queue => 
-        queue.reduce( (tot, ord) => {
-          tot = tot.then( ordlist => submitOrder(ordlist, ord).catch( msg => { throw myError(msg, {list: ordlist, order: ord}) } ) )
-          return tot
-        }, Promise.resolve([]))
-        .catch( msg => myError(msg, {pair: pair}) )
-      )
+      let steps = []
+      seq.forEach( side => {
+        [newords, oldords].forEach( ords => {
+          steps.push( ords.filter(ele=>ele.side === side) )
+        })
+      })
 
-      return Promise.all(ords)
+      return steps.reduce( (prom, ords) => {
+        return prom.then( _ => {
+          let list = ords.map(ele => submitOrder(ele)
+                                       .catch( msg => { throw myError(msg, {list: ordlist, order: ord}) }) )
+          return Promise.all(list)} )
+      }, Promise.resolve())
+
     }).catch(myError)
-//        .map(ele=>`${ele.pricepoint} ${ele.pairName}`)
 }
  
 export const populate = _ => {
-  let allorders = client.pairs()
+  let allorders = client.pairs().slice(1,40)
     .map(prepOrders)
 
   return Promise.all(allorders)
