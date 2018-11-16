@@ -19,7 +19,7 @@ export const getPricePoints = price => {
     .div(utils.bigNumberify(pricePrecisionMultiplier))
  }
 
-export const myError = (msg, supplemental={}) => Object.assign({err: msg.toString(), msg: msg}, supplemental)
+export const myError = (msg, supplemental={}) => Object.assign({err: msg.toString(), msg}, supplemental)
 
 export const sortOrders = (a, b) => {
   let anum = utils.bigNumberify(a.pricepoint)
