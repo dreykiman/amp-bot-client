@@ -25,10 +25,10 @@ const getPriceRange = data => {
   let liq = data.reduce( calcAveragePrice, {total: 0, amount: 0} )
 
   let ave = liq.total/liq.amount
-  let dev = data.reduce( calcStandardDeviation, {total: 0, dev: 0, ave: ave, amount: 0} )
+  let dev = data.reduce( calcStandardDeviation, {total: 0, dev: 0, ave, amount: 0} )
   dev = Math.sqrt( dev.dev/(dev.amount-1) )
 
-  return {dev: dev, ave: ave}
+  return {dev, ave}
 }
 
 export const getPrice = (token) => {
