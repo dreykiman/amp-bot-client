@@ -9,13 +9,13 @@ export const add_order = query => {
   let ord = {
     amount: 0.001,
     price: 0.001,
-    userAddress: "0xf2934427c36ba897f9be6ed554ed2dbce3da1c68",
+    userAddress: client.wallet.address,
     exchangeAddress: "0x344F3B8d79C0A516b43651e26cC4785b07fb6aA1",
     makeFee: 0,
     takeFee: 0,
     side: "BUY",
-    baseTokenAddress: "0x194f4ec528eba59c3b73b05af044e97bc11c292a",
-    quoteTokenAddress: "0xa3f9eacdb960d33845a4b004974feb805e05c4a9",
+    baseTokenAddress: "0xcae5e7b4d82772927e3e969cb4270154208acc06",
+    quoteTokenAddress: "0x7350422082d95ffa655d4a4fe6b7bfd6024a110b",
   }
   Object.assign(ord, query)
 
@@ -136,8 +136,7 @@ const prepOrders = pair => {
 
       return steps.reduce( (prom, ords) => {
         return prom.then( _ => {
-          let list = ords.map(ele => submitOrder(ele)
-                                       .catch( msg => { throw myError(msg, {list: ordlist, order: ord}) }) )
+          let list = ords.map( ele => submitOrder(ele) )
           return Promise.all(list)} )
       }, Promise.resolve())
 
