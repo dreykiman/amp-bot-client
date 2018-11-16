@@ -12,8 +12,8 @@ export const cancel = (req, res) => {
 }
 
 
-export const addorder = (req, res) => {
-  trader.add_order(req.query)
+export const neworder = (req, res) => {
+  client.new_order(req.query)
     .then( data => res.status(200).json(data) )
 }
 

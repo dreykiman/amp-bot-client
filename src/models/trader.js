@@ -5,25 +5,6 @@ import * as binance from './binance'
 import { gauss, getPricePoints, myError } from '../utils'
 
 
-export const add_order = query => {
-  let ord = {
-    amount: 0.001,
-    price: 0.001,
-    userAddress: client.wallet.address,
-    exchangeAddress: "0x344F3B8d79C0A516b43651e26cC4785b07fb6aA1",
-    makeFee: 0,
-    takeFee: 0,
-    side: "BUY",
-    baseTokenAddress: "0xcae5e7b4d82772927e3e969cb4270154208acc06",
-    quoteTokenAddress: "0x7350422082d95ffa655d4a4fe6b7bfd6024a110b",
-  }
-  Object.assign(ord, query)
-
-  return client.new_order(ord)
-    .catch(myError)
-    .then(console.log)
-}
-
 
 export const cancel_all = _ => {
   let cancels = client.my_orders()
