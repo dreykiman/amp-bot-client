@@ -9,10 +9,7 @@ import { gauss, getPricePoints, myError } from '../utils'
 export const cancel_all = _ => {
   let cancels = client.my_orders()
     .filter( ele => ele.status!="FILLED" && ele.status!="CANCELLED")
-    .map( order => {
-      return client.cancel_order(order.hash)
-        .catch(myError)
-    })
+    .map( order => client.cancel_order(order.hash).catch(myError) )
 
   return Promise.all(cancels)
 }
@@ -93,7 +90,7 @@ const prepOrders = pair => {
       let newords = getNewOrdersForPair(tok)
 
       let highestbuy = [...oldords, ...newords]
-        .filter(ele=>ele.side==='BUY')
+        .filter( ele => ele.side==='BUY' )
         .reduce( (high, ord) => {
           let a = utils.bigNumberify(high.pricepoint)
           let b = utils.bigNumberify(ord.pricepoint)
@@ -109,7 +106,7 @@ const prepOrders = pair => {
       let steps = []
       seq.forEach( side => {
         [newords, oldords].forEach( ords => {
-          steps.push( ords.filter(ele=>ele.side === side) )
+          steps.push( ords.filter( ele => ele.side === side ) )
         })
       })
 
