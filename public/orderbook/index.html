@@ -25,14 +25,14 @@ td.asks{
   border: 1px solid red;
   color: red;
 }
-
-/*
-td.debug{
-  min-width: 200px;
-  border: 1px solid black;
-}
-*/
 </style>
+
+<script src="https://cdn.ethers.io/scripts/ethers-v4.min.js"
+        charset="utf-8"
+        type="text/javascript">
+</script>
+
+<script src="/utils.js"></script>
 
 <script>
 
@@ -99,9 +99,6 @@ function onload() {
     popget.send()
   }
 
-  document.body.appendChild(btn0)
-  document.body.appendChild(btn1)
-
   let pairreq = new XMLHttpRequest()
 
   pairreq.onreadystatechange = function() {
@@ -123,7 +120,8 @@ function onload() {
         if(data.asks!=null && data.bids!=null) {
           ["bids", "asks"].forEach( (name,icell) => {
             let pair = data.pair
-document.getElementById("lastpair").innerHTML = pair
+
+            document.getElementById("lastpair").innerHTML = pair
 
             data[name].forEach( ele => {
               if( ele.amount == "0")
@@ -132,7 +130,7 @@ document.getElementById("lastpair").innerHTML = pair
                 ob[pair][name][ele.pricepoint] = ele.amount
             })
             let line = Object.keys(ob[pair][name]).sort( (a,b) => name==="asks" ? a-b : b-a)
-              .map( price => 'price: '+price+', amount: '+ob[pair][name][price] )
+              .map( price => 'price: '+reversePrice(price)+', amount: '+reverseAmount(ob[pair][name][price]) )
               .join("<br>")
 
             rows[pair].cells[icell].innerHTML = line
@@ -182,7 +180,7 @@ document.getElementById("lastpair").innerHTML = pair
 </head>
 
 <body onload=onload()>
-<h3><p class="saving">Last pair changed: <span id='lastpair'></span><span>.</span><span>.</span><span>.</span></p><h3>
+<h3><p class="saving">Changing pair: <span id='lastpair'></span><span>.</span><span>.</span><span>.</span></p><h3>
 
 </body>
 </html>
