@@ -21,9 +21,7 @@ export const cancel_all = _ => {
 
 const getPricesForPair = pair => {
   return binance.getPrice(pair.baseTokenSymbol)
-    .then( price => {
-      return { base: pair.baseTokenAddress, prices: price, quote: pair.quoteTokenAddress}
-    })
+    .then( price => ({ base: pair.baseTokenAddress, prices: price, quote: pair.quoteTokenAddress}) )
 }
 
 
@@ -127,9 +125,7 @@ const prepOrders = pair => {
 export const populate = _ => {
   return client.pairs()
     .reduce( (lastpair, pair) => {
-      return lastpair.then( _ => {
-        return prepOrders(pair)
-      })
+      return lastpair.then( _ => prepOrders(pair) )
     }, Promise.resolve())
     .catch(myError)
 }

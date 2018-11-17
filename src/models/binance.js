@@ -35,9 +35,7 @@ export const getPrice = (token) => {
   return rp('https://api.binance.com/api/v1/depth?symbol='+token+'ETH', { json: true })
     .then( data => {
       if (data.bids.length > 0) {
-        return ['bids', 'asks'].map( name => {
-          return getPriceRange( data[name] )
-        })
+        return ['bids', 'asks'].map( name => getPriceRange( data[name] ))
       }
       throw { err: `no data available for specified token: https://api.binance.com/api/v1/depth?symbol=${token}ETH ` }
     })
