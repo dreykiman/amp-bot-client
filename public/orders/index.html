@@ -24,6 +24,10 @@ tr.FILLED {
   opacity: 0.4
 }
 
+tr.expired {
+  text-decoration: line-through;
+}
+
 tr.CANCELLED {
   text-decoration: line-through;
   text-decoration-style: wavy;
@@ -68,6 +72,7 @@ function onload() {
 
       let ws = new WebSocket("ws://52.78.227.253:8081/socket")
 
+      let rows = {}
       ws.onmessage = ev => {
         let data = JSON.parse(ev.data)
         if(data.channel && data.channel == "raw_orderbook" && data.event && data.event.payload){
@@ -83,27 +88,30 @@ function onload() {
 
           if (data!=null){
             data.forEach(function(ord){
+              if (ord.hash in rows)
+                rows[ord.hash].className = "expired " + ord.side
+/*
               for( let i=tbl.rows.length;i--;)
                 if(ord.hash==tbl.rows[i].id)
                   tbl.deleteRow(i)
-
+*/
               ord.amount = reverseAmount(ord.amount) -  reverseAmount(ord.filledAmount)
               ord.price = reversePrice(ord.pricepoint)
 
               let i = 0
               if(isINIT)
                 for (;i<tbl.rows.length;i++)
-                  if (tbl.rows[i].cells[4].innerHTML < ord.createdAt)
+                  if (new Date(tbl.rows[i].cells[4].innerHTML) < new Date(ord.createdAt))
                     break
   
               let row = tbl.insertRow(i)
-              row.id = ord.hash
+              rows[ord.hash] = row
               row.className = ord.status+" "+ord.side
               row.insertCell().innerHTML = ['side','pairName'].map(ele=>ord[ele]).join(" ")
               row.insertCell().innerHTML = ord.amount
               row.insertCell().innerHTML = ord.price
               row.insertCell().innerHTML = ord.status
-              row.insertCell().innerHTML = ord.createdAt
+              row.insertCell().innerHTML = new Date(ord.createdAt)
             })
           }
         }
