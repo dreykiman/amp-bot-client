@@ -1,6 +1,4 @@
 import rp from 'request-promise-native'
-import client from './amp-client'
-
 
 const calcAveragePrice = (tot, val) => {
   if(tot.total<10){
