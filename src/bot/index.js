@@ -19,7 +19,7 @@ bot.on('message', (user, userID, channelID, message, evt) => {
     args = args.splice(1)
 
     if (cmd in commands) commands[cmd](user, userID, channelID, args)
-    else commands.default(user, userID, channelID, args)
+    else commands.help(user, userID, channelID, args)
   }
 })
 

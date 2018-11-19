@@ -1,8 +1,5 @@
 import bot from '../bot'
-import * as trader from '../models/trader'
-import client from '../models/amp-client'
-
-let commands = {}
+import {client, trader} from '../models'
 
 let sendMessage = (channelID, message) => {
   bot.sendMessage({
@@ -11,17 +8,17 @@ let sendMessage = (channelID, message) => {
   })
 }
 
-commands.default = (user, userID, channelID, args) => {
+const help = (user, userID, channelID, args) => {
   sendMessage(channelID, 'hello world')
 }
 
-commands.links = (user, userID, channelID, args) => {
+const links = (user, userID, channelID, args) => {
   sendMessage(channelID, "http://66.154.105.119:3000/orderbook")
   sendMessage(channelID, "http://66.154.105.119:3000/orders")
   sendMessage(channelID, "http://66.154.105.119:3000/trades")
 }
 
-commands.pairs = (user, userID, channelID, args) => {
+const pairs = (user, userID, channelID, args) => {
   sendMessage(channelID, JSON.stringify(client.pairs()
     .map(ele=>`ele.pairName = ${ele.baseTokenAddress}/${ele.quoteTokenAddress}`)))
 }
@@ -60,26 +57,26 @@ const order = (channelID, side, args) => {
   }
 }
 
-commands.buy = (user, userID, channelID, args) => {
+const buy = (user, userID, channelID, args) => {
   order(channelID, 'BUY', args)
 }
 
-commands.sell = (user, userID, channelID, args) => {
+const sell = (user, userID, channelID, args) => {
   order(channelID, 'SELL', args)
 }
 
 
-commands.cancelall = trader.cancel_all
+const cancelall = trader.cancel_all
 
-commands.myorders = (user, userID, channelID, args) => {
+const myorders = (user, userID, channelID, args) => {
   if (args.length>0 && client.pairs().some(ele=> args[0]==ele.pairName))
-    sendMessage(channelID, JSON.stringify(client.my_orders(args[0]).map(ele=>ele.hash)))
+    sendMessage(channelID, JSON.stringify(client.my_orders(args[0]).map(ele=>ele.status)))
   else
     sendMessage(channelID, "specify valid pair name")
 }
 
-commands.populate = trader.populate
+const populate = trader.populate
 
-commands.reopen = client.ws.reopen
+const reopen = client.ws.reopen
 
-export default commands
+export default { reopen, populate, cancelall, myorders, buy, sell, pairs, links, help }
