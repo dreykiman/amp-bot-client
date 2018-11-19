@@ -1,10 +1,10 @@
-import client from '../models'
-import * as trader from '../models'
+import {client, trader} from '../models'
 
 export const cancelall = (req, res) => {
   trader.cancel_all()
     .then( data => res.status(200).json(data) )
 }
+
 
 export const cancel = (req, res) => {
   client.cancel_order(req.query.hash)
@@ -14,12 +14,6 @@ export const cancel = (req, res) => {
 
 export const neworder = (req, res) => {
   client.new_order(req.query)
-    .then( data => res.status(200).json(data) )
-}
-
-
-export const take = (req, res) => {
-  trader.take()
     .then( data => res.status(200).json(data) )
 }
 

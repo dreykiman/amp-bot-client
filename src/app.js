@@ -1,7 +1,7 @@
 import express from 'express'
 import router from './routes'
 
-import client from './models/amp-client'
+import { client } from './models'
 
 let app = express()
 app.use('/api', router)

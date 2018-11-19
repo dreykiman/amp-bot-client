@@ -1,5 +1,5 @@
 import bot from './bot'
-import client from './models/amp-client'
+import { client } from './models'
 
 client.start()
   .then( _ => {
