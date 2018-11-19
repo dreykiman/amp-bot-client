@@ -14,13 +14,15 @@ app.use('/api', router)
 client.start()
   .then( _ => {
     let subscriptions = client.pairs()
-      .map( pair => client.subscribe(pair.baseTokenAddress, pair.quoteTokenAddress) )
+      .map( pair => client.subscribe(pair.baseTokenAddress, pair.quoteTokenAddress)
+         .catch( msg => {throw {err: `can not subscribe to ${pair.pairName}`, msg}} ) )
     return Promise.all(subscriptions)
   }).then( _ => {
     app.listen(5000, () => {
       console.log('App listening on port 5000')
     })
   }).catch( msg => {
-    console.log({err: msg.toString(), msg: msg})
+    console.log(msg)
+    process.exit()
   })
 
