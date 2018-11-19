@@ -5,7 +5,6 @@ const router = Router()
 
 router.get('/cancelall', controller.cancelall)
 router.get('/cancel', controller.cancel)
-router.get('/addorder', controller.addorder)
 router.get('/myorders', controller.myorders)
 router.get('/populate', controller.populate)
 router.get('/pairs', controller.pairs)
