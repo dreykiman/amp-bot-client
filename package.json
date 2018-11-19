@@ -6,8 +6,9 @@
   "scripts": {
     "build": "babel ./src --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log --copy-files",
     "start": "npm run build && node dist/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
     "www": "npm run build && node dist/www.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "discord": "npm run build && node dist/discord.js"
   },
   "author": "Andrey Kim",
   "license": "ISC",
@@ -19,9 +20,9 @@
   "dependencies": {
     "amp-node-api-client": "file:../amp/amp-node-api-client",
     "babel-core": "^6.26.3",
+    "discord.io": "github:woor/discord.io#gateway_v6",
     "ethers": "^4.0.7",
     "express": "^4.16.4",
-    "fs": "0.0.1-security",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.5",
     "ws": "^6.1.0"
