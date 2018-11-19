@@ -5,7 +5,6 @@ import * as binance from './binance'
 import { gauss, getPricePoints, myError } from '../utils'
 
 
-
 export const cancel_all = _ => {
   let cancels = client.my_orders()
     .filter( ele => ele.status!="FILLED" && ele.status!="CANCELLED")
@@ -13,7 +12,6 @@ export const cancel_all = _ => {
 
   return Promise.all(cancels)
 }
-
 
 
 const getPricesForPair = pair => {
@@ -61,7 +59,6 @@ const getNewOrdersForPair = tok => {
 
   return orders
 }
-
 
 
 const submitOrder = ord => {
@@ -118,7 +115,8 @@ const prepOrders = pair => {
 
     }).catch(myError)
 }
- 
+
+
 export const populate = _ => {
   return client.pairs()
     .reduce( (lastpair, pair) => {
