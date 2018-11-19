@@ -90,12 +90,9 @@ function onload() {
             data.forEach(function(ord){
               if (ord.hash in rows)
                 rows[ord.hash].className = "expired " + ord.side
-/*
-              for( let i=tbl.rows.length;i--;)
-                if(ord.hash==tbl.rows[i].id)
-                  tbl.deleteRow(i)
-*/
-              ord.amount = reverseAmount(ord.amount) -  reverseAmount(ord.filledAmount)
+
+              let filled = parseInt(ord.filledAmount*100/ord.amount)
+              ord.amount = reverseAmount(ord.amount)
               ord.price = reversePrice(ord.pricepoint)
 
               let i = 0
@@ -108,7 +105,7 @@ function onload() {
               rows[ord.hash] = row
               row.className = ord.status+" "+ord.side
               row.insertCell().innerHTML = ['side','pairName'].map(ele=>ord[ele]).join(" ")
-              row.insertCell().innerHTML = ord.amount
+              row.insertCell().innerHTML = filled+"% / "+ord.amount
               row.insertCell().innerHTML = ord.price
               row.insertCell().innerHTML = ord.status
               row.insertCell().innerHTML = new Date(ord.createdAt)
