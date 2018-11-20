@@ -108,21 +108,22 @@ export default function(client) {
     return steps.reduce( (prom, ords) => {
       return prom.then( list => {
         list.push( ...ords.map( ele => submitOrder(ele) ) )
-        return Promise.all(list)} )
+        return Promise.all(list)
+      })
     }, Promise.resolve([]))
   }
 
 
   const populate = _ => {
-    const poplist = []
+    const poplist = {}
     return client.pairs()
       .reduce( (lastpair, pair) => {
         return lastpair
-          .then( list => poplist.push(list) )
           .then( _ => getPricesForPair(pair))
           .then(processOrders)
           .catch(myError)
-      }, Promise.resolve({}))
+          .then( data => poplist[pair.pairName] = data )
+      }, Promise.resolve())
       .then(_=>poplist)
   }
 
