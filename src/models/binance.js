@@ -29,7 +29,8 @@ const getPriceRange = data => {
   return {dev, ave}
 }
 
-export const getPrice = (token) => {
+
+export const getPrice = token => {
   return rp('https://api.binance.com/api/v1/depth?symbol='+token+'ETH', { json: true })
     .then( data => {
       if (data.bids.length > 0) {
