@@ -109,7 +109,7 @@ function onload() {
       let data = JSON.parse(this.responseText)
 
       let ws = new WebSocket("ws://52.78.227.253:8081/socket")
-      let ob = {}
+      var ob = {}
 
       ws.onmessage = ev => {
         let data = JSON.parse(ev.data)
@@ -118,12 +118,12 @@ function onload() {
         console.log(JSON.stringify(data))
 
         if(data.asks!=null && data.bids!=null) {
-          ["bids", "asks"].forEach( (name,icell) => {
-            let pair = data.pair
+          ["bids", "asks"].forEach( function(name, icell) {
+            let pair = data.pairName
 
             document.getElementById("lastpair").innerHTML = pair
 
-            data[name].forEach( ele => {
+            data[name].forEach( function(ele) {
               if( ele.amount == "0")
                 delete ob[pair][name][ele.pricepoint]
               else
@@ -140,8 +140,7 @@ function onload() {
       }
  
 
-      data.filter( ele => ele.quoteTokenSymbol==="WETH" )
-        .forEach( ele => {
+      data.forEach( ele => {
           let pairName = ele.baseTokenSymbol+"/"+ele.quoteTokenSymbol
 
           let row = tbl.insertRow()

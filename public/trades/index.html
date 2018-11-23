@@ -80,8 +80,7 @@ function onload() {
         }
       }
  
-      data.filter( ele => ele.quoteTokenSymbol==="WETH" )
-        .forEach( ele => {
+      data.forEach( ele => {
           let pairName = ele.baseTokenSymbol+"/"+ele.quoteTokenSymbol
 
           ws.addEventListener("open", _ => {
