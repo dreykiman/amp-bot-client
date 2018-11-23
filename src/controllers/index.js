@@ -30,5 +30,5 @@ export const myorders = (req, res) => {
 
 
 export const pairs = (req, res) => {
-  res.json(client.pairs())
+  res.status(200).json(client.pairs())
 }
