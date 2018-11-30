@@ -13,7 +13,7 @@ tr.pairName td {
 td {
   vertical-align: text-top;
   padding: 0.3em;
-  min-width: 400px;
+  min-width: 550px;
 }
 
 td.bids {
@@ -132,11 +132,19 @@ function onload() {
               else
                 ob[pair][name][ele.pricepoint] = ele.amount
             })
+            let tot = 0
             let line = Object.keys(ob[pair][name]).sort( (a,b) => name==="asks" ? a-b : b-a)
-              .map( price => 'price: '+reversePrice(price, decimals[quoteSym])+', amount: '+reverseAmount(ob[pair][name][price], decimals[baseSym]) )
+              .map( price => {
+                let pr = reversePrice(price, decimals[quoteSym])
+                let am = reverseAmount(ob[pair][name][price], decimals[baseSym])
+                tot += am*pr
+                return 'price: '+pr.toFixed(7)+'<sup>'+quoteSym
+                  +'</sup>, amount: '+am.toFixed(7)+'<sup>'+baseSym
+                  +'</sup> / '+(pr*am).toFixed(7)+'<sup>'+quoteSym+'</sup>'
+              })
               .join("<br>")
 
-            rows[pair].cells[icell].innerHTML = line
+            rows[pair].cells[icell].innerHTML = '<b>total: '+tot.toFixed(6)+'<sup>'+quoteSym+'</sup></b><br>'+line
           })
 
         }
