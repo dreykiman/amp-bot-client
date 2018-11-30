@@ -61,6 +61,7 @@ th, td {
 
 <script>
 
+var decimals = {}
 function onload() {
   let pairreq = new XMLHttpRequest()
 
@@ -69,6 +70,11 @@ function onload() {
       let tbl = document.getElementById("feed")
 
       let data = JSON.parse(this.responseText)
+      decimals = data.reduce( function(decs, pair) {
+        decs[pair.baseTokenSymbol] = pair.baseTokenDecimals
+        decs[pair.quoteTokenSymbol] = pair.quoteTokenDecimals
+        return decs
+      }, {})
 
       let ws = new WebSocket("ws://52.78.227.253:8081/socket")
 
@@ -92,8 +98,9 @@ function onload() {
                 rows[ord.hash].className = "expired " + ord.side
 
               let filled = parseInt(ord.filledAmount*100/ord.amount)
-              ord.amount = reverseAmount(ord.amount)
-              ord.price = reversePrice(ord.pricepoint)
+              let [baseSym, quoteSym] = ord.pairName.split('/')
+              ord.amount = reverseAmount(ord.amount, decimals[baseSym])
+              ord.price = reversePrice(ord.pricepoint, decimals[quoteSym])
 
               let i = 0
               if(isINIT)

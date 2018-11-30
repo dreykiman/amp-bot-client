@@ -1,0 +1,63 @@
+<html>
+<head>
+<title>Orders feed</title>
+
+<link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+<style>
+body {
+  font-family: 'Roboto';font-size: 22px;
+}
+
+table {
+  table-layout: fixed;
+}
+
+th, td {
+  text-align: left;
+  vertical-align: text-top;
+  padding: 0.3em;
+}
+
+</style>
+
+<script src="https://cdn.ethers.io/scripts/ethers-v4.min.js"
+        charset="utf-8"
+        type="text/javascript">
+</script>
+
+<script src="/utils.js"></script>
+
+<script>
+
+function onload() {
+  let pairreq = new XMLHttpRequest()
+
+  pairreq.onreadystatechange = function() {
+    if (this.readyState == 4){
+      let tbl = document.getElementById("feed")
+
+      let data = JSON.parse(this.responseText)
+      Object.keys(data).forEach(pair => {
+        let rw = tbl.insertRow()
+        rw.insertCell().innerHTML = pair
+        rw.insertCell().innerHTML = 'err' in data[pair] ? data[pair].err : "SUCCESS"
+      })
+    }
+  }
+
+  pairreq.open("GET", "/api/populate"+location.search)
+  pairreq.send()
+}
+
+</script>
+
+</head>
+
+<body onload=onload()>
+
+<table>
+<tbody id=feed>
+</tbody>
+</table>
+</body>
+</html>

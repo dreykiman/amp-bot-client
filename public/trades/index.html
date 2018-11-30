@@ -37,11 +37,17 @@ td {
 function onload() {
   let pairreq = new XMLHttpRequest()
 
+  var decimals = {}
   pairreq.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
       let tbl = document.getElementById("feed")
 
       let data = JSON.parse(this.responseText)
+      decimals = data.reduce( function(decs, pair) {
+        decs[pair.baseTokenSymbol] = pair.baseTokenDecimals
+        decs[pair.quoteTokenSymbol] = pair.quoteTokenDecimals
+        return decs
+      }, {})
 
       let ws = new WebSocket("ws://52.78.227.253:8081/socket")
 
@@ -53,8 +59,10 @@ function onload() {
           if (data!=null){
             data.forEach(function(trd){
 
-              trd.amount = reverseAmount(trd.amount)
-              trd.price = reversePrice(trd.pricepoint)
+              let [baseSym, quoteSym] = trd.pairName.split('/')
+              trd.amount = reverseAmount(trd.amount, decimals[baseSym])
+              trd.price = reversePrice(trd.pricepoint, decimals[quoteSym])
+
 
               for (let j=tbl.rows.length;j--;)
                 if (tbl.rows[j].hash == trd.hash) {

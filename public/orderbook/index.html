@@ -41,6 +41,8 @@ btn0.innerHTML= "POPULATE"
 
 let rows = {}
 
+let decimals = {}
+
 function populate() {
     let popget = new XMLHttpRequest()
 
@@ -122,6 +124,7 @@ function onload() {
             let pair = data.pairName
 
             document.getElementById("lastpair").innerHTML = pair
+            let [baseSym,quoteSym] = pair.split("/")
 
             data[name].forEach( function(ele) {
               if( ele.amount == "0")
@@ -130,7 +133,7 @@ function onload() {
                 ob[pair][name][ele.pricepoint] = ele.amount
             })
             let line = Object.keys(ob[pair][name]).sort( (a,b) => name==="asks" ? a-b : b-a)
-              .map( price => 'price: '+reversePrice(price)+', amount: '+reverseAmount(ob[pair][name][price]) )
+              .map( price => 'price: '+reversePrice(price, decimals[quoteSym])+', amount: '+reverseAmount(ob[pair][name][price], decimals[baseSym]) )
               .join("<br>")
 
             rows[pair].cells[icell].innerHTML = line
@@ -142,6 +145,8 @@ function onload() {
 
       data.forEach( ele => {
           let pairName = ele.baseTokenSymbol+"/"+ele.quoteTokenSymbol
+          decimals[ele.baseTokenSymbol] = ele.baseTokenDecimals
+          decimals[ele.quoteTokenSymbol] = ele.quoteTokenDecimals
 
           let row = tbl.insertRow()
           row.className = "pairName"
