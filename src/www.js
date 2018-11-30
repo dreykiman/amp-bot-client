@@ -5,7 +5,7 @@ let app = express()
 app.use(express.static('public'))
 
 app.get('/api/pairs', (req, res) =>  {
-  return rp('http://engine.amp.exchange/pairs', {json: true})
+  return rp('https://amp.exchange/api/pairs', {json: true})
     .then( data => {
       data.data.forEach( ele => {
         ele.pairName = `${ele.baseTokenSymbol}/${ele.quoteTokenSymbol}`
