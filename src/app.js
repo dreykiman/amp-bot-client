@@ -4,6 +4,7 @@ import router from './routes'
 import { client } from './models'
 
 let app = express()
+app.use(express.static('public'))
 app.use('/api', router)
 
 client.start()
