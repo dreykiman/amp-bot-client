@@ -22,33 +22,35 @@ const executeTrade = conf => {
     .filter(ele => ele.side != conf.side)
 
   openorders = openorders.sort(sortOrders)
-  if (conf.side==="SELL") openorders.reverse()
+  let side = Math.random()>0.5 ? 'SELL' : 'BUY'
+  if (side==="SELL") openorders.reverse()
   openorders = openorders.slice(0,2)
 
   openorders.forEach(ele=>{
     let price = amputils.reversePrice(ele.pricepoint, client.decimals[ele.quoteToken])
     let amount = amputils.reverseAmount(ele.amount, client.decimals[ele.baseToken])
-    console.log(`you can ${conf.side}: price: ${price} amount: ${amount}`)
+    console.log(`you can ${side}: price: ${price} amount: ${amount}`)
   })
 
-  let order = {
-    exchangeAddress: client.exchangeAddress,
-    baseTokenAddress: pair.baseTokenAddress,
-    quoteTokenAddress: pair.quoteTokenAddress,
-    price: 0.00004,
-    side: conf.side,
-    amount: 50000,
-    makeFee: client.makeFee[quoteSym],
-    takeFee: client.takeFee[quoteSym]
-  }
+  if (openorders.length>0) {
+    let order = {
+      exchangeAddress: client.exchangeAddress,
+      baseTokenAddress: pair.baseTokenAddress,
+      quoteTokenAddress: pair.quoteTokenAddress,
+      price: openorders[0].price,
+      side: side,
+      amount: openorders[0].amount/2,
+      makeFee: client.makeFee[quoteSym],
+      takeFee: client.takeFee[quoteSym]
+   }
 
 /*
-
   client.new_order(order)
     .catch( msg => {
       console.log(msg)
     })
 */
+  }
 }
 
 const getConf = _ => {
