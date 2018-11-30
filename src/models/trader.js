@@ -43,16 +43,15 @@ export default function(client) {
     let orders = []
 
     tok.prices.forEach( (price, ind) => {
-      [-2,-1,0,1,2].filter( ds => {
+      [-1.5,-1,0,1,1.5].filter( ds => {
         let xx = amputils.getPricePoints(price.ave + ds*price.dev, tok.quoteDec)
         return ind===0 ? xx.add(2).lt(mid) : xx.sub(2).gt(mid)
       })
       .forEach( ds => {
         let xx = price.ave + ds*price.dev
-        let yy = gauss(xx, price.ave, price.dev)
 
         let fee = client.makeFee[tok.quoteSym]
-        let maxAmount = 10*client.makeFee[tok.quoteSym]/Math.pow(10, tok.quoteDec)/xx
+        let maxAmount = 20*client.makeFee[tok.quoteSym]/Math.pow(10, tok.quoteDec)/xx
 
         orders.push({
           amount: maxAmount/(ds*ds+1),
