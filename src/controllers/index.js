@@ -19,7 +19,7 @@ export const neworder = (req, res) => {
 
 
 export const populate = (req, res) => {
-  trader.populate()
+  trader.populate(req.query.pair)
     .then( data => res.status(200).json(data) )
 }
 

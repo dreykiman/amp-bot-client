@@ -10,7 +10,7 @@ const calcAveragePrice = (tot, val) => {
 
 
 const calcStandardDeviation = (tot, val) => {
-  if(tot.total<10){
+  if(tot.total<100){
     tot.total += parseFloat(val[0])*parseFloat(val[1])
     tot.dev += Math.pow( parseFloat(val[0]) - tot.ave, 2 ) * parseFloat(val[1])
     tot.amount += parseFloat(val[1])
@@ -31,7 +31,7 @@ const getPriceRange = data => {
 
 
 export const getPrice = token => {
-  return rp('https://api.binance.com/api/v1/depth?symbol='+token+'ETH', { json: true })
+  return rp('https://api.binance.com/api/v1/depth?symbol='+token, { json: true })
     .then( data => {
       if (data.bids.length > 0) {
         return ['bids', 'asks'].map( name => getPriceRange( data[name] ))
@@ -40,3 +40,7 @@ export const getPrice = token => {
     })
 }
 
+export const getETHPrice = _ => {
+  return rp('https://api.binance.com/api/v1/depth?symbol=ETHUSDT', { json: true })
+    .then( data => (Number(data.bids[0][0]) + Number(data.asks[0][0]))/2 )
+}

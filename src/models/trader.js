@@ -1,7 +1,7 @@
 import { utils } from 'ethers'
-import { orderbook } from 'amp-node-api-client'
+import { orderbook, amputils } from 'amp-node-api-client'
 import * as binance from './binance'
-import { gauss, getPricePoints, myError } from '../utils'
+import { gauss, myError } from '../utils'
 
 
 export default function(client) {
@@ -16,41 +16,51 @@ export default function(client) {
 
 
   const getPricesForPair = pair => {
-    return binance.getPrice(pair.baseTokenSymbol)
-      .then( price => ({ base: pair.baseTokenAddress, prices: price, quote: pair.quoteTokenAddress}) )
+    return binance.getETHPrice()
+      .then(ethprice => {
+        let scale = ethprice
+        if (pair.quoteTokenSymbol=="WETH") scale = 1
+        return binance.getPrice(pair.baseTokenSymbol+'ETH')
+          .then( price => {
+            price = price.map(pr => ({dev: pr.dev/scale, ave: pr.ave/scale}))
+            return { base: pair.baseTokenAddress, prices: price, quote: pair.quoteTokenAddress, quoteDec: pair.quoteTokenDecimals, quoteSym: pair.quoteTokenSymbol }
+        })
+      })
   }
 
 
   const getCancelOrdersForPair = tok => {
     let myorders = Object.values(orderbook)
       .filter( ord => ord.status!="CANCELLED" && ord.status!="FILLED" )
-    let cancels = myorders.filter( ord => ord.baseToken === tok.base)
+    let cancels = myorders.filter( ord => ord.baseToken === tok.base && ord.quoteToken === tok.quote)
 
     return cancels
   }
 
 
   const getNewOrdersForPair = tok => {
-    let mid = getPricePoints(tok.prices[0].ave).add(getPricePoints(tok.prices[1].ave)).div(2)
+    let mid = amputils.getPricePoints(tok.prices[0].ave, tok.quoteDec).add(amputils.getPricePoints(tok.prices[1].ave, tok.quoteDec)).div(2)
     let orders = []
 
     tok.prices.forEach( (price, ind) => {
-      [-2,-1.5,-1,-0.5,0,0.5,1,1.5,2].filter( ds => {
-        let xx = getPricePoints(price.ave + ds*price.dev)
+      [-2,-1,0,1,2].filter( ds => {
+        let xx = amputils.getPricePoints(price.ave + ds*price.dev, tok.quoteDec)
         return ind===0 ? xx.add(2).lt(mid) : xx.sub(2).gt(mid)
       })
       .forEach( ds => {
         let xx = price.ave + ds*price.dev
         let yy = gauss(xx, price.ave, price.dev)
 
+        let fee = client.makeFee[tok.quoteSym]
+
         orders.push({
-          amount: 0.01*yy/gauss(price.ave, price.ave, price.dev)/xx,
+          amount: 1.0/(ds*ds+1)*100*117/xx*0.001,
           price: xx,
-          pricepoint: getPricePoints(xx).toString(),
+          pricepoint: amputils.getPricePoints(xx, tok.quoteDec).toString(),
           userAddress: client.wallet.address,
-          exchangeAddress: "0x344F3B8d79C0A516b43651e26cC4785b07fb6aA1",
-          makeFee: 0,
-          takeFee: 0,
+          exchangeAddress: "0x9c446449fbc378941586Ef7a2196B13CC12AEBcd",
+          makeFee: client.makeFee[tok.quoteSym],
+          takeFee: client.takeFee[tok.quoteSym],
           side: ["BUY", "SELL"][ind],
           baseTokenAddress: tok.base,
           quoteTokenAddress: tok.quote
@@ -96,7 +106,7 @@ export default function(client) {
     // if highestbuy in new orders
     let seq = ['SELL', 'BUY']
     // if highestbuy in old orders
-    if ('hash' in highestbuy) seq.reverse()
+    if (oldords.filter( ele => ele.side==='BUY' ).length>0 && 'hash' in highestbuy) seq.reverse()
 
     let steps = []
     seq.forEach( side => {
@@ -114,17 +124,19 @@ export default function(client) {
   }
 
 
-  const populate = _ => {
+  const populate = pair => {
     const poplist = {}
-    return client.pairs()
-      .reduce( (lastpair, pair) => {
-        return lastpair
-          .then( _ => getPricesForPair(pair))
-          .then(processOrders)
-          .catch(myError)
-          .then( data => poplist[pair.pairName] = data )
-      }, Promise.resolve())
-      .then(_=>poplist)
+    let pairs = client.pairs()
+    if (pair!=null) pairs = pairs.filter(ele => ele.pairName == pair)
+
+    return pairs.reduce( (lastpair, pair) => {
+      return lastpair
+        .then( _ => getPricesForPair(pair))
+        .then(processOrders)
+        .catch(myError)
+        .then( data => poplist[pair.pairName] = data )
+    }, Promise.resolve())
+    .then(_=>poplist)
   }
 
   return { cancel_all, populate }

@@ -7,24 +7,5 @@ export const gauss = (xx, mu, sig) => {
 
 const round = (n, decimals = '2') => Math.round(n * Math.pow(10, decimals)) / Math.pow(10, decimals)
 
-
-export const getPricePoints = price => {
-  let pricePrecisionMultiplier = 1e9
-  let priceMultiplier = utils.bigNumberify('1000000000') //1e6
-  price = round(price * pricePrecisionMultiplier, 0)
-
-  return utils
-    .bigNumberify(price)
-    .mul(priceMultiplier)
-    .div(utils.bigNumberify(pricePrecisionMultiplier))
- }
-
 export const myError = (msg, supplemental={}) => Object.assign({err: msg.toString(), msg}, supplemental)
 
-export const sortOrders = (a, b) => {
-  let anum = utils.bigNumberify(a.pricepoint)
-  let bnum = utils.bigNumberify(b.pricepoint)
-  if (anum.gt(bnum)) return 1
-  else if (anum.eq(bnum)) return 0
-  return -1
-}
