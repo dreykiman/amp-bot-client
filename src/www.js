@@ -16,14 +16,14 @@ app.get('/api/pairs', (req, res) =>  {
 
 
 app.get('/api/trades/poloniex', (req, res) =>  {
-  rp('https://poloniex.com/public?command=returnTradeHistory&currencyPair='+pair, { json: true })
-    .then(res.status(200).json(data.data))
+  rp('https://poloniex.com/public?command=returnTradeHistory&currencyPair='+req.query.pair, { json: true })
+    .then(data => res.status(200).json(data))
 })
 
 
 app.get('/api/trades/binance', (req, res) =>  {
-  return rp('https://api.binance.com/api/v1/trades?symbol='+pair, { json: true })
-    .then(res.status(200).json(data.data))
+  return rp('https://api.binance.com/api/v1/trades?symbol='+req.query.pair, { json: true })
+    .then(data => res.status(200).json(data))
 })
 
 
