@@ -22,7 +22,7 @@ export default function(client) {
         if (pair.quoteTokenSymbol=="WETH") scale = 1
         return binance.getPrice(pair.baseTokenSymbol+'ETH')
           .then( price => {
-            price = price.map(pr => ({dev: pr.dev/scale, ave: pr.ave/scale}))
+            price = price.map(pr => ({dev: pr.dev*scale, ave: pr.ave*scale}))
             return { base: pair.baseTokenAddress, prices: price, quote: pair.quoteTokenAddress, quoteDec: pair.quoteTokenDecimals, quoteSym: pair.quoteTokenSymbol }
         })
       })
@@ -39,16 +39,53 @@ export default function(client) {
 
 
   const getNewOrdersForPair = tok => {
-    let mid = amputils.getPricePoints(tok.prices[0].ave, tok.quoteDec).add(amputils.getPricePoints(tok.prices[1].ave, tok.quoteDec)).div(2)
     let orders = []
 
+    let midprice = (tok.prices[0].ave + tok.prices[1].ave)/2.0
+    let buystart = Math.min(midprice * 0.98, tok.prices[0].ave)
+    let sellstart = Math.max(midprice * 1.02, tok.prices[1].ave)
+    let dev = Math.max(tok.prices[0].dev, tok.prices[1].dev)
+
+    let starts = [buystart, sellstart]
+
+    starts.forEach( (start, ind) => {
+      let dir = ind === 0 ? -1 : 1
+      let fee = client.takeFee[tok.quoteSym]
+
+      let steps = [0.1, 0.2, 0.4, 0.6, 0.8, 1]
+      steps.forEach( step => {
+        step += (Math.random()*2-1) * 0.05
+
+        let xx = start + dir * step * dev
+
+        let minAmount = 5 * client.makeFee[tok.quoteSym]/Math.pow(10, tok.quoteDec)/xx
+
+        orders.push({
+          amount: minAmount * ( 1 + step*step ),
+          price: xx,
+          pricepoint: amputils.getPricePoints(xx, tok.quoteDec).toString(),
+          userAddress: client.wallet.address,
+          exchangeAddress: client.exchangeAddress,
+          makeFee: client.makeFee[tok.quoteSym],
+          takeFee: client.takeFee[tok.quoteSym],
+          side: ["BUY", "SELL"][ind],
+          baseTokenAddress: tok.base,
+          quoteTokenAddress: tok.quote
+        })
+      })
+    })
+
+/*
+    let mid = amputils.getPricePoints(tok.prices[0].ave, tok.quoteDec).add(amputils.getPricePoints(tok.prices[1].ave, tok.quoteDec)).div(2)
+    // tok.prices -> 2 elements array [buy, sell] structures of price {ave, dev} 
     tok.prices.forEach( (price, ind) => {
       [-1.5,-1,0,1,1.5].filter( ds => {
         let xx = amputils.getPricePoints(price.ave + ds*price.dev, tok.quoteDec)
+        // ind===0 = BUY
         return ind===0 ? xx.add(2).lt(mid) : xx.sub(2).gt(mid)
       })
       .forEach( ds => {
-        let xx = price.ave + ds*price.dev
+        let xx = price.ave + ds * price.dev
 
         let fee = client.makeFee[tok.quoteSym]
         let maxAmount = 20*client.makeFee[tok.quoteSym]/Math.pow(10, tok.quoteDec)/xx
@@ -67,7 +104,7 @@ export default function(client) {
         })
       })
     })
-
+*/
     return orders
   }
 
