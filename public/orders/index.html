@@ -76,7 +76,7 @@ function onload() {
         return decs
       }, {})
 
-      let ws = new WebSocket("wss://engine.amp.exchange/socket")
+      let ws = new WebSocket(wsaddr)
 
       let rows = {}
       ws.onmessage = ev => {

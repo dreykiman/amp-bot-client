@@ -114,11 +114,10 @@ function onload() {
         return tot
       }, {})
 
-      let ws = new WebSocket("wss://engine.amp.exchange/socket")
+      let ws = new WebSocket(wsaddr)
 
       ws.onmessage = ev => {
         let data = JSON.parse(ev.data)
-console.log(data)
         if(data.channel && data.channel == "raw_orderbook" && data.event){
           let pair, orders
           if (data.event.type==="INIT"){

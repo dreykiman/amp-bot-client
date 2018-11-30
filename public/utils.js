@@ -20,3 +20,5 @@ console.log(baseDec)
   return amount.toString()/precisionMultiplier
 }
 
+var wsaddr = "wss://amp.exchange/socket"
+var wsaddr = "ws://ampapi:8081/socket"
