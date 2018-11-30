@@ -7,6 +7,7 @@
     "build": "babel ./src --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log --copy-files",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npm run build && node dist/app.js",
+    "taker": "npm run build && node dist/taker.js",
     "www": "npm run build && node dist/www.js",
     "discord": "npm run build && node dist/discord.js"
   },

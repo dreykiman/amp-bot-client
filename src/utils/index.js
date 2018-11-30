@@ -9,3 +9,10 @@ const round = (n, decimals = '2') => Math.round(n * Math.pow(10, decimals)) / Ma
 
 export const myError = (msg, supplemental={}) => Object.assign({err: msg.toString(), msg}, supplemental)
 
+export const sortOrders = (a, b) => {
+  let anum = utils.bigNumberify(a.pricepoint)
+  let bnum = utils.bigNumberify(b.pricepoint)
+  if (anum.gt(bnum)) return 1
+  else if (anum.eq(bnum)) return 0
+  return -1
+}

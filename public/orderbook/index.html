@@ -110,7 +110,7 @@ function onload() {
 
       let data = JSON.parse(this.responseText)
 
-      let ws = new WebSocket("ws://52.78.227.253:8081/socket")
+      let ws = new WebSocket("wss://engine.amp.exchange/socket")
       var ob = {}
 
       ws.onmessage = ev => {
