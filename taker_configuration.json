@@ -1,0 +1,272 @@
+[
+  {
+    "pairName": "AE/USDC",
+    "enable": true,
+    "interval": 14400000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "BAT/USDC",
+    "enable": true,
+    "interval": 14400000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "BNB/USDC",
+    "enable": true,
+    "interval": 1800000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "KNC/USDC",
+    "enable": true,
+    "interval": 14400000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "LOOM/USDC",
+    "enable": true,
+    "interval": 7200000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "LRC/USDC",
+    "enable": true,
+    "interval": 14400000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "MITH/USDC",
+    "enable": true,
+    "interval": 14400000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "MKR/USDC",
+    "enable": true,
+    "interval": 1200000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "NPXS/USDC",
+    "enable": true,
+    "interval": 14400000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "OMG/USDC",
+    "enable": true,
+    "interval": 1800000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "PRFT/USDC",
+    "enable": true,
+    "interval": 3600000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "REP/USDC",
+    "enable": true,
+    "interval": 14400000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "SNT/USDC",
+    "enable": true,
+    "interval": 14400000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "WTC/USDC",
+    "enable": true,
+    "interval": 14400000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "ZRX/USDC",
+    "enable": true,
+    "interval": 14400000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "AE/WETH",
+    "enable": true,
+    "interval": 14400000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "BAT/WETH",
+    "enable": true,
+    "interval": 14400000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "BNB/WETH",
+    "enable": true,
+    "interval": 1800000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "KNC/WETH",
+    "enable": true,
+    "interval": 14400000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "LOOM/WETH",
+    "enable": true,
+    "interval": 7200000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "LRC/WETH",
+    "enable": true,
+    "interval": 14400000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "MITH/WETH",
+    "enable": true,
+    "interval": 14400000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "MKR/WETH",
+    "enable": true,
+    "interval": 1200000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "NPXS/WETH",
+    "enable": true,
+    "interval": 14400000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "OMG/WETH",
+    "enable": true,
+    "interval": 1800000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "PRFT/WETH",
+    "enable": true,
+    "interval": 3600000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "REP/WETH",
+    "enable": true,
+    "interval": 14400000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "SNT/WETH",
+    "enable": true,
+    "interval": 14400000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "WTC/WETH",
+    "enable": true,
+    "interval": 14400000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "ZRX/WETH",
+    "enable": true,
+    "interval": 14400000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "AE/DAI",
+    "enable": true,
+    "interval": 14400000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "BAT/DAI",
+    "enable": true,
+    "interval": 14400000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "BNB/DAI",
+    "enable": true,
+    "interval": 1800000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "KNC/DAI",
+    "enable": true,
+    "interval": 14400000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "LOOM/DAI",
+    "enable": true,
+    "interval": 7200000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "LRC/DAI",
+    "enable": true,
+    "interval": 14400000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "MITH/DAI",
+    "enable": true,
+    "interval": 14400000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "MKR/DAI",
+    "enable": true,
+    "interval": 1200000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "NPXS/DAI",
+    "enable": true,
+    "interval": 14400000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "OMG/DAI",
+    "enable": true,
+    "interval": 1800000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "PRFT/DAI",
+    "enable": true,
+    "interval": 3600000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "REP/DAI",
+    "enable": true,
+    "interval": 14400000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "SNT/DAI",
+    "enable": true,
+    "interval": 14400000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "WTC/DAI",
+    "enable": true,
+    "interval": 14400000,
+    "side": "SELL"
+  },
+  {
+    "pairName": "ZRX/DAI",
+    "enable": true,
+    "interval": 14400000,
+    "side": "SELL"
+  }
+]
