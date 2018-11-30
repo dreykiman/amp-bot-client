@@ -52,10 +52,10 @@ export default function(client) {
         let yy = gauss(xx, price.ave, price.dev)
 
         let fee = client.makeFee[tok.quoteSym]
-        let maxAmount = 10*client.makeFee[tok.quoteSym]/xx
+        let maxAmount = 10*client.makeFee[tok.quoteSym]/Math.pow(10, tok.quoteDec)/xx
 
         orders.push({
-          amount: maxAmount/(ds*ds+1)
+          amount: maxAmount/(ds*ds+1),
           price: xx,
           pricepoint: amputils.getPricePoints(xx, tok.quoteDec).toString(),
           userAddress: client.wallet.address,
