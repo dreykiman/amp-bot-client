@@ -58,7 +58,7 @@ export default function(client) {
           price: xx,
           pricepoint: amputils.getPricePoints(xx, tok.quoteDec).toString(),
           userAddress: client.wallet.address,
-          exchangeAddress: "0x9c446449fbc378941586Ef7a2196B13CC12AEBcd",
+          exchangeAddress: client.exchangeAddress,
           makeFee: client.makeFee[tok.quoteSym],
           takeFee: client.takeFee[tok.quoteSym],
           side: ["BUY", "SELL"][ind],
