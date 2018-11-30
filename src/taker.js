@@ -14,42 +14,45 @@ const executeTrade = conf => {
   let [baseSym, quoteSym] = conf.pairName.split('/')
   let pair = client.pairs().find(ele => ele.baseTokenSymbol === baseSym && ele.quoteTokenSymbol === quoteSym)
 
-  console.log(conf.pairName)
-  console.log(Date())
-
+  let side = Math.random()>0.5 ? 'SELL' : 'BUY'
   let openorders = Object.values(orderbook)
     .filter(ele => ele.pairName == conf.pairName && ele.status!="CANCELLED" && ele.status!="FILLED")
-    .filter(ele => ele.side != conf.side)
+    .filter(ele => ele.side != side)
 
   openorders = openorders.sort(sortOrders)
-  let side = Math.random()>0.5 ? 'SELL' : 'BUY'
   if (side==="SELL") openorders.reverse()
-  openorders = openorders.slice(0,2)
+  openorders = openorders.slice(0,1)
 
+  let out = [conf.pairName, Date()]
   openorders.forEach(ele=>{
     let price = amputils.reversePrice(ele.pricepoint, client.decimals[ele.quoteToken])
     let amount = amputils.reverseAmount(ele.amount, client.decimals[ele.baseToken])
-    console.log(`you can ${side}: price: ${price} amount: ${amount}`)
+    out.push(`you can ${side}: price: ${price} amount: ${amount}`)
   })
 
+  if (out.length>2) console.log(out.join('\n'))
+
   if (openorders.length>0) {
+    let ord = openorders[0]
+    let price = amputils.reversePrice(ord.pricepoint, client.decimals[ord.quoteToken])
+    let amount = amputils.reverseAmount(ord.amount, client.decimals[ord.baseToken])
+
     let order = {
       exchangeAddress: client.exchangeAddress,
       baseTokenAddress: pair.baseTokenAddress,
       quoteTokenAddress: pair.quoteTokenAddress,
-      price: openorders[0].price,
+      price: price,
       side: side,
-      amount: openorders[0].amount/2,
+      amount: amount,
       makeFee: client.makeFee[quoteSym],
       takeFee: client.takeFee[quoteSym]
    }
 
-/*
-  client.new_order(order)
-    .catch( msg => {
-      console.log(msg)
-    })
-*/
+    client.new_order(order)
+      .catch( msg => {
+        console.log(msg)
+      })
+
   }
 }
 
@@ -62,10 +65,14 @@ const updatePair = pairName => {
   let conf = getConf().find(ele => ele.pairName === pairName)
   let {interval} = conf
 
+  executeTrade(conf)
+
+/*
   setTimeout( _ => {
     executeTrade(conf)
     updatePair(pairName)
   }, interval)
+*/
 }
 
 
