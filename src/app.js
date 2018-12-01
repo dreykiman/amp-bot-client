@@ -25,6 +25,7 @@ init().then( _ => {
   })
 
 
+/*
 const reconnect = _ => {
   client.ws.once('close', _ => {
     console.log('attempt to reconnect')
@@ -36,4 +37,4 @@ const reconnect = _ => {
 }
 
 reconnect()
-
+*/

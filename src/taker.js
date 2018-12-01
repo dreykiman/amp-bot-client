@@ -72,13 +72,37 @@ const updatePairConfiguration = pairName => {
 
 
 
-client.start()
+const init = _ => client.start()
   .then( _ => {
     let subscriptions = client.pairs()
       .map( pair => client.subscribe(pair.baseTokenAddress, pair.quoteTokenAddress)
          .catch( msg => {throw {err: `can not subscribe to ${pair.pairName}`, msg}} ) )
     return Promise.all(subscriptions)
-  }).then( _ => getConf()
+  })
+
+
+init().then( _ => getConf()
     .filter( ele => ele.enable )
-    .forEach( ele => updatePairConfiguration(ele.pairName) )
+    .forEach( ele => updatePairConfiguration( ele.pairName ) )
   ).catch( msg => console.log(msg) )
+
+
+/*
+const promiseOnClose = _ => {
+  return new Promise( (res, rej) => {
+    client.ws.once('close', res)
+  })
+}
+
+const reconnectAttempt = _ => {
+  console.log('attempt to reconnect')
+  console.log(client.ws.time)
+  client.ws.reopen()
+  console.log(client.ws.time)
+  setTimeout(_=>console.log(client.ws.time), 2000)
+  promiseOnClose().then(reconnectAttempt)
+}
+
+promiseOnClose().then(reconnectAttempt)
+
+*/
