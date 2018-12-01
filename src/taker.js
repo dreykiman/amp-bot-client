@@ -48,11 +48,8 @@ const executeTrade = conf => {
       takeFee: client.takeFee[quoteSym]
    }
 
-    client.new_order(order)
-      .catch( msg => {
-        console.log(msg)
-      })
-
+    return client.new_order(order)
+      .catch( msg => console.log(msg) )
   }
 }
 
@@ -84,6 +81,6 @@ client.start()
          .catch( msg => {throw {err: `can not subscribe to ${pair.pairName}`, msg}} ) )
     return Promise.all(subscriptions)
   }).then( _ => getConf()
-    .filter(ele => ele.enable)
+    .filter( ele => ele.enable )
     .forEach( ele => updatePair(ele.pairName) )
-  )
+  ).catch( msg => console.log(msg) )
