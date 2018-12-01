@@ -11,19 +11,21 @@ app.get('/api/pairs', (req, res) =>  {
         ele.pairName = `${ele.baseTokenSymbol}/${ele.quoteTokenSymbol}`
       })
       res.send(data.data)
-    })
+    }).catch( msg => console.log(msg) )
 })
 
 
 app.get('/api/trades/poloniex', (req, res) =>  {
   rp('https://poloniex.com/public?command=returnTradeHistory&currencyPair='+req.query.pair, { json: true })
     .then(data => res.status(200).json(data))
+    .catch( msg => console.log(msg) )
 })
 
 
 app.get('/api/trades/binance', (req, res) =>  {
   return rp('https://api.binance.com/api/v1/trades?symbol='+req.query.pair, { json: true })
     .then(data => res.status(200).json(data))
+    .catch( msg => console.log(msg) )
 })
 
 
