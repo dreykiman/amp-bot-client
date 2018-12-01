@@ -69,7 +69,7 @@ export default function(client) {
 
         let xx = start + dir * step * dev
 
-        let minAmount = 5 * client.makeFee[tok.quoteSym]/Math.pow(10, tok.quoteDec)/xx
+        let minAmount = (5+2*Math.random()) * client.makeFee[tok.quoteSym]/Math.pow(10, tok.quoteDec)/xx
 
         orders.push({
           amount: minAmount * ( 1 + step*step ),
