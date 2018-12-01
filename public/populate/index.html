@@ -64,7 +64,7 @@ function populatePair(pairs){
 }
 
 
-function onload() {
+function populate() {
   let pairreq = new XMLHttpRequest()
 
   pairreq.onreadystatechange = function() {
@@ -84,13 +84,19 @@ function onload() {
   pairreq.send()
 }
 
+
+function onload() {
+  let pairName = location.search.length > 0 ? location.search.split("=")[1] : "ALL"
+  document.getElementById("button").innerHTML = "POPULATE "+pairName
+}
+
 </script>
 
 </head>
 
-<body>
+<body onload=onload()>
 
-<button onclick=onload>Populate</button>
+<button onclick="populate()" id="button">Populate</button>
 <table>
 <tbody id=feed>
 </tbody>
