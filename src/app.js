@@ -7,7 +7,7 @@ let app = express()
 app.use(express.static('public'))
 app.use('/api', router)
 
-const start = _ => client.start()
+const init = _ => client.start()
   .then( _ => {
     let subscriptions = client.pairs()
       .map( pair => client.subscribe(pair.baseTokenAddress, pair.quoteTokenAddress)
@@ -15,7 +15,7 @@ const start = _ => client.start()
     return Promise.all(subscriptions)
   })
 
-start().then( _ => {
+init().then( _ => {
     app.listen(5000, () => {
       console.log('App listening on port 5000')
     })
@@ -30,7 +30,7 @@ const reconnect = _ => {
     console.log('attempt to reconnect')
     client.ws.reopen()
     client.ws.once('open', _ => {
-      start().then(reconnect)
+      init().then(reconnect)
     })
   })
 }
