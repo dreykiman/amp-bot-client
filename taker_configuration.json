@@ -2,226 +2,226 @@
   {
     "pairName": "AE/USDC",
     "enable": true,
-    "interval": 14400000
+    "interval": 180000
   },
   {
     "pairName": "BAT/USDC",
-    "enable": true,
+    "enable": false,
     "interval": 14400000
   },
   {
     "pairName": "BNB/USDC",
-    "enable": true,
+    "enable": false,
     "interval": 1800000
   },
   {
     "pairName": "KNC/USDC",
-    "enable": true,
+    "enable": false,
     "interval": 14400000
   },
   {
     "pairName": "LOOM/USDC",
-    "enable": true,
+    "enable": false,
     "interval": 7200000
   },
   {
     "pairName": "LRC/USDC",
-    "enable": true,
+    "enable": false,
     "interval": 14400000
   },
   {
     "pairName": "MITH/USDC",
-    "enable": true,
+    "enable": false,
     "interval": 14400000
   },
   {
     "pairName": "MKR/USDC",
-    "enable": true,
+    "enable": false,
     "interval": 1200000
   },
   {
     "pairName": "NPXS/USDC",
-    "enable": true,
+    "enable": false,
     "interval": 14400000
   },
   {
     "pairName": "OMG/USDC",
-    "enable": true,
+    "enable": false,
     "interval": 1800000
   },
   {
     "pairName": "PRFT/USDC",
-    "enable": true,
+    "enable": false,
     "interval": 3600000
   },
   {
     "pairName": "REP/USDC",
-    "enable": true,
+    "enable": false,
     "interval": 14400000
   },
   {
     "pairName": "SNT/USDC",
-    "enable": true,
+    "enable": false,
     "interval": 14400000
   },
   {
     "pairName": "WTC/USDC",
-    "enable": true,
+    "enable": false,
     "interval": 14400000
   },
   {
     "pairName": "ZRX/USDC",
-    "enable": true,
+    "enable": false,
     "interval": 14400000
   },
   {
     "pairName": "AE/WETH",
-    "enable": true,
+    "enable": false,
     "interval": 14400000
   },
   {
     "pairName": "BAT/WETH",
-    "enable": true,
+    "enable": false,
     "interval": 14400000
   },
   {
     "pairName": "BNB/WETH",
-    "enable": true,
+    "enable": false,
     "interval": 1800000
   },
   {
     "pairName": "KNC/WETH",
-    "enable": true,
+    "enable": false,
     "interval": 14400000
   },
   {
     "pairName": "LOOM/WETH",
-    "enable": true,
+    "enable": false,
     "interval": 7200000
   },
   {
     "pairName": "LRC/WETH",
-    "enable": true,
+    "enable": false,
     "interval": 14400000
   },
   {
     "pairName": "MITH/WETH",
-    "enable": true,
+    "enable": false,
     "interval": 14400000
   },
   {
     "pairName": "MKR/WETH",
-    "enable": true,
+    "enable": false,
     "interval": 1200000
   },
   {
     "pairName": "NPXS/WETH",
-    "enable": true,
+    "enable": false,
     "interval": 14400000
   },
   {
     "pairName": "OMG/WETH",
-    "enable": true,
+    "enable": false,
     "interval": 1800000
   },
   {
     "pairName": "PRFT/WETH",
-    "enable": true,
+    "enable": false,
     "interval": 3600000
   },
   {
     "pairName": "REP/WETH",
-    "enable": true,
+    "enable": false,
     "interval": 14400000
   },
   {
     "pairName": "SNT/WETH",
-    "enable": true,
+    "enable": false,
     "interval": 14400000
   },
   {
     "pairName": "WTC/WETH",
-    "enable": true,
+    "enable": false,
     "interval": 14400000
   },
   {
     "pairName": "ZRX/WETH",
-    "enable": true,
+    "enable": false,
     "interval": 14400000
   },
   {
     "pairName": "AE/DAI",
-    "enable": true,
+    "enable": false,
     "interval": 14400000
   },
   {
     "pairName": "BAT/DAI",
-    "enable": true,
+    "enable": false,
     "interval": 14400000
   },
   {
     "pairName": "BNB/DAI",
-    "enable": true,
+    "enable": false,
     "interval": 1800000
   },
   {
     "pairName": "KNC/DAI",
-    "enable": true,
+    "enable": false,
     "interval": 14400000
   },
   {
     "pairName": "LOOM/DAI",
-    "enable": true,
+    "enable": false,
     "interval": 7200000
   },
   {
     "pairName": "LRC/DAI",
-    "enable": true,
+    "enable": false,
     "interval": 14400000
   },
   {
     "pairName": "MITH/DAI",
-    "enable": true,
+    "enable": false,
     "interval": 14400000
   },
   {
     "pairName": "MKR/DAI",
-    "enable": true,
+    "enable": false,
     "interval": 1200000
   },
   {
     "pairName": "NPXS/DAI",
-    "enable": true,
+    "enable": false,
     "interval": 14400000
   },
   {
     "pairName": "OMG/DAI",
-    "enable": true,
+    "enable": false,
     "interval": 1800000
   },
   {
     "pairName": "PRFT/DAI",
-    "enable": true,
+    "enable": false,
     "interval": 3600000
   },
   {
     "pairName": "REP/DAI",
-    "enable": true,
+    "enable": false,
     "interval": 14400000
   },
   {
     "pairName": "SNT/DAI",
-    "enable": true,
+    "enable": false,
     "interval": 14400000
   },
   {
     "pairName": "WTC/DAI",
-    "enable": true,
+    "enable": false,
     "interval": 14400000
   },
   {
     "pairName": "ZRX/DAI",
-    "enable": true,
+    "enable": false,
     "interval": 14400000
   }
 ]

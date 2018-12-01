@@ -58,18 +58,16 @@ const getConf = _ => {
   return JSON.parse(rawdata)
 }
 
-const updatePair = pairName => {
+const updatePairConfiguration = pairName => {
   let conf = getConf().find(ele => ele.pairName === pairName)
   let {interval} = conf
 
-  executeTrade(conf)
+//  executeTrade(conf)
 
-/*
   setTimeout( _ => {
     executeTrade(conf)
-    updatePair(pairName)
+    updatePairConfiguration(pairName)
   }, interval)
-*/
 }
 
 
@@ -82,5 +80,5 @@ client.start()
     return Promise.all(subscriptions)
   }).then( _ => getConf()
     .filter( ele => ele.enable )
-    .forEach( ele => updatePair(ele.pairName) )
+    .forEach( ele => updatePairConfiguration(ele.pairName) )
   ).catch( msg => console.log(msg) )
