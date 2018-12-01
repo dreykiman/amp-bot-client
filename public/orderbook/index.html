@@ -2,7 +2,7 @@
 <head>
 <title>Orderbook</title>
 
-<link rel="stylesheet" type="text/css" href="dots.css">
+<link rel="stylesheet" type="text/css" href="/dots.css">
 
 <style>
 
@@ -112,6 +112,9 @@ function onload() {
 
       let ws = new WebSocket(wsaddr)
       var ob = {}
+
+      ws.onerror = location.reload
+      ws.onclose = location.reload
 
       ws.onmessage = ev => {
         let data = JSON.parse(ev.data)

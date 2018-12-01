@@ -78,6 +78,9 @@ function onload() {
 
       let ws = new WebSocket(wsaddr)
 
+      ws.onerror = location.reload
+      ws.onclose = location.reload
+
       let rows = {}
       ws.onmessage = ev => {
         let data = JSON.parse(ev.data)

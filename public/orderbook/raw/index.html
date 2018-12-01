@@ -116,6 +116,9 @@ function onload() {
 
       let ws = new WebSocket(wsaddr)
 
+      ws.onerror = location.reload
+      ws.onclose = location.reload
+
       ws.onmessage = ev => {
         let data = JSON.parse(ev.data)
         if(data.channel && data.channel == "raw_orderbook" && data.event){
