@@ -20,7 +20,18 @@ export default function(client) {
       .then(ethprice => {
         let scale = ethprice
         if (pair.quoteTokenSymbol=="WETH") scale = 1
-        return binance.getPrice(pair.baseTokenSymbol+'ETH')
+
+        let pairName = pair.baseTokenSymbol+'ETH'
+        if (pair.quoteTokenSymbol === "WETH" && pair.baseTokenSymbol === "DAI"){
+          pairName = "TUSDETH"
+          scale = 1
+        }
+        else if (pair.quoteTokenSymbol === "USDC" && pair.baseTokenSymbol === "WETH"){
+          pairName = "ETHUSDT"
+          scale = 1
+        }
+
+        return binance.getPrice(pairName)
           .then( price => {
             price = price.map(pr => ({dev: pr.dev*scale, ave: pr.ave*scale}))
             return { base: pair.baseTokenAddress, prices: price, quote: pair.quoteTokenAddress, quoteDec: pair.quoteTokenDecimals, quoteSym: pair.quoteTokenSymbol }
