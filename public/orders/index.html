@@ -118,6 +118,7 @@ function onload() {
               row.insertCell().innerHTML = filled+"% / "+ord.amount
               row.insertCell().innerHTML = ord.price
               row.insertCell().innerHTML = ord.status
+              row.insertCell().innerHTML = ord.userAddress
               row.insertCell().innerHTML = new Date(ord.createdAt)
             })
           }

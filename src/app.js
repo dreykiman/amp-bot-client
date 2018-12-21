@@ -16,8 +16,8 @@ const init = _ => client.start()
   })
 
 init().then( _ => {
-    app.listen(5000, () => {
-      console.log('App listening on port 5000')
+    app.listen(3001, () => {
+      console.log('App listening on port 3001')
     })
   }).catch( msg => {
     console.log(msg)
